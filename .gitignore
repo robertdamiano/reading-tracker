@@ -43,3 +43,5 @@ next-env.d.ts
 
 # Firebase CLI cache
 .firebase/
+
+.env.local
