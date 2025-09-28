@@ -2,11 +2,24 @@
 
 import {useEffect, useState} from "react";
 
-const HELLO_ENDPOINT = process.env.NEXT_PUBLIC_HELLO_ENDPOINT ?? "/api/hello";
-
 type HelloResponse = {
   message: string;
 };
+
+function resolveHelloEndpoint(): string {
+  if (typeof window === "undefined") {
+    return "/api/hello";
+  }
+
+  const hostname = window.location.hostname;
+  const isLocal = hostname === "localhost" || hostname === "127.0.0.1";
+
+  if (isLocal) {
+    return process.env.NEXT_PUBLIC_HELLO_ENDPOINT ?? "/api/hello";
+  }
+
+  return "/api/hello";
+}
 
 export default function Home() {
   const [message, setMessage] = useState<string>("Loading message...");
@@ -15,12 +28,14 @@ export default function Home() {
   useEffect(() => {
     async function loadMessage() {
       try {
-        const response = await fetch(HELLO_ENDPOINT);
+        const endpoint = resolveHelloEndpoint();
+        const response = await fetch(endpoint);
         if (!response.ok) {
           throw new Error(`Request failed with status ${response.status}`);
         }
         const data = (await response.json()) as HelloResponse;
         setMessage(data.message ?? "Hello world");
+        setError(null);
       } catch (err) {
         console.error("Failed to load hello world message", err);
         setError("Could not load the greeting. Check your Functions emulator or deployment.");
