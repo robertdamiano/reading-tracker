@@ -1,12 +1,13 @@
 # Reading Tracker
 
-Firebase-backed web app scaffold for tracking reading streaks. This first iteration renders a simple dashboard page that fetches a "hello world" message stored in Cloud Firestore via a Cloud Function.
+Family reading tracker built with Next.js 15 and Firebase. The dashboard requires Firebase email/password auth before it loads any data.
 
 ## Prerequisites
 
 - Node.js 22+
 - npm 10+
 - Firebase CLI (`npx firebase --version`)
+- Access to the Firebase project `reading-tracker-7a90d`
 
 ## Getting Started
 
@@ -14,16 +15,23 @@ Firebase-backed web app scaffold for tracking reading streaks. This first iterat
    ```bash
    npm install
    ```
-2. Copy the example environment file and update it if you plan to use the Firebase emulators:
+2. Copy the environment template and populate the Firebase web config plus the allowed email list:
    ```bash
    cp .env.local.example .env.local
-   # Update NEXT_PUBLIC_HELLO_ENDPOINT to match the Functions emulator URL when needed
+   # Fill NEXT_PUBLIC_FIREBASE_* and NEXT_PUBLIC_ALLOWED_EMAILS
    ```
-3. Start the Next.js dev server:
+3. (Optional) Start the Functions + Firestore emulators in another terminal:
+   ```bash
+   npm --prefix functions run serve -- --only "functions,firestore"
+   ```
+4. Launch the Next.js dev server:
    ```bash
    npm run dev
    ```
-   The UI fetches from `NEXT_PUBLIC_HELLO_ENDPOINT` (defaults to `/api/hello`). Without emulators running this will call the deployed Cloud Function.
+
+## Authentication
+
+Accounts are provisioned manually in Firebase Authentication. Create email/password users for the family members and list their emails in `NEXT_PUBLIC_ALLOWED_EMAILS` so the login screen accepts them. The app signs users out via the Firebase web SDK.
 
 ## Firebase Tooling
 
@@ -34,25 +42,24 @@ Firebase-backed web app scaffold for tracking reading streaks. This first iterat
   ```
 - Run the Firebase emulators (Functions + Firestore):
   ```bash
-  npm --prefix functions run serve
+  npm --prefix functions run serve -- --only "functions,firestore"
   ```
-  When emulators are running, point the web app at the local function by setting `NEXT_PUBLIC_HELLO_ENDPOINT` in `.env.local`.
+  When emulators are running, set `NEXT_PUBLIC_HELLO_ENDPOINT` in `.env.local` so the UI points at the local function.
 
 ## Deploying to Firebase
 
-1. Build the static Next.js site and export it:
+1. Build the static Next.js site:
    ```bash
    npm run build:static
    ```
-   This generates the `out/` directory consumed by Firebase Hosting.
-2. Deploy Hosting and Functions:
+2. Deploy Hosting, Functions, Firestore rules, and indexes:
    ```bash
    npm run firebase:deploy
    ```
-   The script first rebuilds the static site, then runs `firebase deploy` using the logged-in account and the default project (`reading-tracker-7a90d`).
 
 ## Next Steps
 
-- Replace the placeholder dashboard with real streak analytics.
-- Expand auth (email/password) through Firebase Authentication.
-- Model reading entries in Firestore and surface them in the UI.
+- Replace the placeholder dashboard with streak summaries and book highlights.
+- Add a form so parents or Luke can log new reading sessions.
+- Materialize daily totals/streak metadata for quick reads once UI demands it.
+- Add automated tests for the auth flow and future data components.
