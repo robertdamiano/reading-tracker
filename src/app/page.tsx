@@ -6,6 +6,7 @@ import {useEffect, useState} from "react";
 
 import {auth} from "@/lib/firebase/client";
 import {useAuth} from "./providers/AuthProvider";
+import {ReadingLogForm} from "./components/ReadingLogForm";
 
 type HelloResponse = {
   message: string;
@@ -98,18 +99,32 @@ export default function Home() {
           {isSigningOut ? "Signing out..." : "Sign out"}
         </button>
       </header>
-      <main className="mx-auto mt-8 max-w-xl rounded-lg bg-white p-10 shadow">
+      <main className="mx-auto mt-8 max-w-4xl px-6">
         <h1 className="text-3xl font-semibold text-slate-900">Reading Tracker</h1>
-        <p className="mt-4 text-slate-600">
-          This is the starter dashboard. The greeting below is fetched from Firestore through a
-          Firebase Cloud Function.
-        </p>
-        <div className="mt-8 rounded border border-dashed border-slate-300 bg-slate-50 p-6 text-center">
-          {error ? (
-            <span className="text-red-600">{error}</span>
-          ) : (
-            <span className="text-xl font-medium text-slate-800">{message}</span>
-          )}
+        <p className="mt-2 text-slate-600">Track Luke&apos;s daily reading progress</p>
+
+        <div className="mt-8 grid gap-8 md:grid-cols-2">
+          {/* Reading Log Form */}
+          <div>
+            <ReadingLogForm />
+          </div>
+
+          {/* Placeholder for stats - will be replaced with real dashboard */}
+          <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 className="text-xl font-semibold text-slate-900 mb-4">Reading Statistics</h2>
+            <div className="space-y-4">
+              <div className="rounded border border-dashed border-slate-300 bg-slate-50 p-6 text-center">
+                {error ? (
+                  <span className="text-red-600">{error}</span>
+                ) : (
+                  <span className="text-sm text-slate-600">{message}</span>
+                )}
+              </div>
+              <p className="text-sm text-slate-500 text-center">
+                Dashboard with streak and totals coming soon!
+              </p>
+            </div>
+          </div>
         </div>
       </main>
     </div>
