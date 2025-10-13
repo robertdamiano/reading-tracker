@@ -63,3 +63,5 @@ Accounts are provisioned manually in Firebase Authentication. Create email/passw
 - Add a form so parents or Luke can log new reading sessions.
 - Materialize daily totals/streak metadata for quick reads once UI demands it.
 - Add automated tests for the auth flow and future data components.
+
+Just a test
