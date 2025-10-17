@@ -1,11 +1,16 @@
 "use client";
 
-import {useState} from "react";
-import {collection, addDoc, serverTimestamp} from "firebase/firestore";
+import {useState, useEffect} from "react";
+import {collection, addDoc, serverTimestamp, getDocs} from "firebase/firestore";
 import {db} from "@/lib/firebase/client";
 import {useAuth} from "../providers/AuthProvider";
 
 type LogType = "minutes" | "pages" | "books";
+
+interface Book {
+  title: string;
+  author: string;
+}
 
 export function ReadingLogForm() {
   const {user} = useAuth();
@@ -19,6 +24,68 @@ export function ReadingLogForm() {
   const [bookAuthor, setBookAuthor] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<{type: "success" | "error"; text: string} | null>(null);
+  const [books, setBooks] = useState<Book[]>([]);
+  const [titleSuggestions, setTitleSuggestions] = useState<Book[]>([]);
+  const [authorSuggestions, setAuthorSuggestions] = useState<string[]>([]);
+  const [showTitleSuggestions, setShowTitleSuggestions] = useState(false);
+  const [showAuthorSuggestions, setShowAuthorSuggestions] = useState(false);
+
+  // Fetch unique books on mount
+  useEffect(() => {
+    async function fetchBooks() {
+      try {
+        const readerId = "luke";
+        const logsRef = collection(db, `readers/${readerId}/logs`);
+        const snapshot = await getDocs(logsRef);
+
+        const booksMap = new Map<string, Book>();
+
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          if (data.bookTitle && data.bookAuthor) {
+            const key = `${data.bookTitle}|${data.bookAuthor}`;
+            if (!booksMap.has(key)) {
+              booksMap.set(key, {
+                title: data.bookTitle,
+                author: data.bookAuthor
+              });
+            }
+          }
+        });
+
+        setBooks(Array.from(booksMap.values()));
+      } catch (error) {
+        console.error("Failed to fetch books:", error);
+      }
+    }
+
+    void fetchBooks();
+  }, []);
+
+  // Filter title suggestions as user types
+  useEffect(() => {
+    if (bookTitle.trim().length > 0) {
+      const filtered = books.filter(book =>
+        book.title.toLowerCase().includes(bookTitle.toLowerCase())
+      );
+      setTitleSuggestions(filtered);
+    } else {
+      setTitleSuggestions([]);
+    }
+  }, [bookTitle, books]);
+
+  // Filter author suggestions as user types
+  useEffect(() => {
+    if (bookAuthor.trim().length > 0) {
+      const uniqueAuthors = [...new Set(books.map(b => b.author))];
+      const filtered = uniqueAuthors.filter(author =>
+        author.toLowerCase().includes(bookAuthor.toLowerCase())
+      );
+      setAuthorSuggestions(filtered);
+    } else {
+      setAuthorSuggestions([]);
+    }
+  }, [bookAuthor, books]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -57,13 +124,11 @@ export function ReadingLogForm() {
         updatedBy: user.email,
       };
 
-      // Add optional book metadata if provided
-      if (bookTitle.trim()) {
-        Object.assign(logData, {bookTitle: bookTitle.trim()});
-      }
-      if (bookAuthor.trim()) {
-        Object.assign(logData, {bookAuthor: bookAuthor.trim()});
-      }
+      // Add book metadata
+      Object.assign(logData, {
+        bookTitle: bookTitle.trim(),
+        bookAuthor: bookAuthor.trim()
+      });
 
       await addDoc(logsRef, logData);
 
@@ -135,32 +200,74 @@ export function ReadingLogForm() {
           />
         </div>
 
-        <div>
+        <div className="relative">
           <label htmlFor="bookTitle" className="block text-sm font-medium text-slate-700 mb-1">
-            Book Title <span className="text-slate-400">(optional)</span>
+            Book Title
           </label>
           <input
             type="text"
             id="bookTitle"
             value={bookTitle}
             onChange={(e) => setBookTitle(e.target.value)}
-            placeholder="The Hobbit"
+            onFocus={() => setShowTitleSuggestions(true)}
+            onBlur={() => setTimeout(() => setShowTitleSuggestions(false), 200)}
+            placeholder="Harry Potter And The Half-Blood Prince"
+            required
             className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
+          {showTitleSuggestions && titleSuggestions.length > 0 && (
+            <div className="absolute z-10 mt-1 w-full max-h-60 overflow-auto rounded-md border border-slate-200 bg-white shadow-lg">
+              {titleSuggestions.map((book, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => {
+                    setBookTitle(book.title);
+                    setBookAuthor(book.author);
+                    setShowTitleSuggestions(false);
+                  }}
+                  className="w-full px-3 py-2 text-left text-sm hover:bg-blue-50 focus:bg-blue-50 focus:outline-none"
+                >
+                  <div className="font-medium text-slate-900">{book.title}</div>
+                  <div className="text-xs text-slate-500">{book.author}</div>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
-        <div>
+        <div className="relative">
           <label htmlFor="bookAuthor" className="block text-sm font-medium text-slate-700 mb-1">
-            Book Author <span className="text-slate-400">(optional)</span>
+            Book Author
           </label>
           <input
             type="text"
             id="bookAuthor"
             value={bookAuthor}
             onChange={(e) => setBookAuthor(e.target.value)}
-            placeholder="J.R.R. Tolkien"
+            onFocus={() => setShowAuthorSuggestions(true)}
+            onBlur={() => setTimeout(() => setShowAuthorSuggestions(false), 200)}
+            placeholder="J. K. Rowling"
+            required
             className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
+          {showAuthorSuggestions && authorSuggestions.length > 0 && (
+            <div className="absolute z-10 mt-1 w-full max-h-60 overflow-auto rounded-md border border-slate-200 bg-white shadow-lg">
+              {authorSuggestions.map((author, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => {
+                    setBookAuthor(author);
+                    setShowAuthorSuggestions(false);
+                  }}
+                  className="w-full px-3 py-2 text-left text-sm hover:bg-blue-50 focus:bg-blue-50 focus:outline-none"
+                >
+                  {author}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {message && (

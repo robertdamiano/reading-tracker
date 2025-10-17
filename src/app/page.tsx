@@ -7,31 +7,11 @@ import {useEffect, useState} from "react";
 import {auth} from "@/lib/firebase/client";
 import {useAuth} from "./providers/AuthProvider";
 import {ReadingLogForm} from "./components/ReadingLogForm";
-
-type HelloResponse = {
-  message: string;
-};
-
-function resolveHelloEndpoint(): string {
-  if (typeof window === "undefined") {
-    return "/api/hello";
-  }
-
-  const hostname = window.location.hostname;
-  const isLocal = hostname === "localhost" || hostname === "127.0.0.1";
-
-  if (isLocal) {
-    return process.env.NEXT_PUBLIC_HELLO_ENDPOINT ?? "/api/hello";
-  }
-
-  return "/api/hello";
-}
+import {ReadingStats} from "./components/ReadingStats";
 
 export default function Home() {
   const router = useRouter();
   const {user, loading} = useAuth();
-  const [message, setMessage] = useState<string>("Loading message...");
-  const [error, setError] = useState<string | null>(null);
   const [isSigningOut, setSigningOut] = useState(false);
 
   useEffect(() => {
@@ -40,30 +20,6 @@ export default function Home() {
       router.replace(`/login?redirectTo=${redirectTarget}`);
     }
   }, [loading, user, router]);
-
-  useEffect(() => {
-    if (loading || !user) {
-      return;
-    }
-
-    async function loadMessage() {
-      try {
-        const endpoint = resolveHelloEndpoint();
-        const response = await fetch(endpoint);
-        if (!response.ok) {
-          throw new Error(`Request failed with status ${response.status}`);
-        }
-        const data = (await response.json()) as HelloResponse;
-        setMessage(data.message ?? "Hello world");
-        setError(null);
-      } catch (err) {
-        console.error("Failed to load hello world message", err);
-        setError("Could not load the greeting. Check your Functions emulator or deployment.");
-      }
-    }
-
-    void loadMessage();
-  }, [loading, user]);
 
   if (loading || !user) {
     return (
@@ -109,21 +65,9 @@ export default function Home() {
             <ReadingLogForm />
           </div>
 
-          {/* Placeholder for stats - will be replaced with real dashboard */}
-          <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-semibold text-slate-900 mb-4">Reading Statistics</h2>
-            <div className="space-y-4">
-              <div className="rounded border border-dashed border-slate-300 bg-slate-50 p-6 text-center">
-                {error ? (
-                  <span className="text-red-600">{error}</span>
-                ) : (
-                  <span className="text-sm text-slate-600">{message}</span>
-                )}
-              </div>
-              <p className="text-sm text-slate-500 text-center">
-                Dashboard with streak and totals coming soon!
-              </p>
-            </div>
+          {/* Reading Statistics */}
+          <div>
+            <ReadingStats />
           </div>
         </div>
       </main>

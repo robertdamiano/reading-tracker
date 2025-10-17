@@ -47,4 +47,7 @@ next-env.d.ts
 firebase-debug.log
 ui-debug.log
 
+# Firebase service account keys
+*-firebase-adminsdk-*.json
+
 .env.local
