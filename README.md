@@ -1,6 +1,6 @@
 # Reading Tracker
 
-Family reading tracker built with Next.js 15 and Firebase. The dashboard requires Firebase email/password auth before it loads any data.
+Family reading tracker built with Next.js 15 and Firebase featuring achievements, activity feeds, and monthly calendar visualizations. The dashboard requires Firebase email/password auth before it loads any data.
 
 ## Prerequisites
 
@@ -57,9 +57,18 @@ Accounts are provisioned manually in Firebase Authentication. Create email/passw
    npm run firebase:deploy
    ```
 
+## Features
+
+- **Reading Log Form**: Log daily reading by minutes, pages, or books with optional book title/author
+- **Live Statistics**: Current streak, last log date, and totals for minutes, pages, and books
+- **Achievements System**: 20 milestone badges across streak, pages, minutes, and books categories
+- **Recent Activity Feed**: Last 10 reading entries with book details
+- **Monthly Overview**: Calendar heatmap showing logged days, monthly stats, and completion percentage
+- **Book-Themed Design**: Warm, calm UI with amber/orange gradients and book icons
+
 ## Next Steps
 
-- Replace the placeholder dashboard with streak summaries and book highlights.
-- Add a form so parents or Luke can log new reading sessions.
-- Materialize daily totals/streak metadata for quick reads once UI demands it.
-- Add automated tests for the auth flow and future data components.
+- Performance optimization: Materialize stats into `readers/{readerId}/dailyStats` for faster loads
+- Multi-reader support: Add UI for selecting/managing multiple readers
+- Data export: Add CSV export functionality
+- Add automated tests for the auth flow and data components

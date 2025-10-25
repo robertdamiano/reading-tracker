@@ -113,10 +113,10 @@ export function ReadingStats() {
 
   if (loading) {
     return (
-      <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="text-xl font-semibold text-slate-900 mb-4">Reading Statistics</h2>
+      <div className="rounded-2xl border-2 border-amber-200/50 bg-gradient-to-br from-white to-amber-50/30 p-6 shadow-xl backdrop-blur-sm">
+        <h2 className="text-xl font-bold text-amber-900 mb-4">Reading Statistics</h2>
         <div className="space-y-3">
-          <p className="text-sm text-slate-500">Loading statistics...</p>
+          <p className="text-sm text-amber-700">Loading statistics...</p>
         </div>
       </div>
     );
@@ -124,8 +124,8 @@ export function ReadingStats() {
 
   if (error || !stats) {
     return (
-      <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="text-xl font-semibold text-slate-900 mb-4">Reading Statistics</h2>
+      <div className="rounded-2xl border-2 border-amber-200/50 bg-gradient-to-br from-white to-amber-50/30 p-6 shadow-xl backdrop-blur-sm">
+        <h2 className="text-xl font-bold text-amber-900 mb-4">Reading Statistics</h2>
         <div className="space-y-3">
           <p className="text-sm text-red-600">{error || "Failed to load statistics"}</p>
         </div>
@@ -134,8 +134,8 @@ export function ReadingStats() {
   }
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-      <h2 className="text-xl font-semibold text-slate-900 mb-4">Reading Statistics</h2>
+    <div className="rounded-2xl border-2 border-amber-200/50 bg-gradient-to-br from-white to-amber-50/30 p-6 shadow-xl backdrop-blur-sm">
+      <h2 className="text-xl font-bold text-amber-900 mb-4">Reading Statistics</h2>
       <div className="space-y-3">
         <div className="flex justify-between items-center py-2 border-b border-slate-100">
           <span className="text-sm font-medium text-slate-700">Current Streak</span>

@@ -148,8 +148,8 @@ export function ReadingLogForm() {
   }
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-      <h2 className="text-xl font-semibold text-slate-900 mb-4">Log Reading Session</h2>
+    <div className="rounded-2xl border-2 border-amber-200/50 bg-gradient-to-br from-white to-amber-50/30 p-6 shadow-xl backdrop-blur-sm">
+      <h2 className="text-xl font-bold text-amber-900 mb-4">Log Reading Session</h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
