@@ -1,8 +1,26 @@
 @import "tailwindcss";
 
+@variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Light theme colors */
+  --page-bg-start: #fffbeb;
+  --page-bg-middle: #ffedd5;
+  --page-bg-end: #fef9c3;
+
+  --card-bg: #ffffff;
+  --card-bg-secondary: #fffbeb;
+  --card-border: rgba(251, 191, 36, 0.3);
+
+  --text-primary: #78350f;
+  --text-secondary: rgba(120, 53, 15, 0.7);
+  --text-tertiary: #92400e;
+
+  --accent-amber: #f59e0b;
+  --accent-orange: #ea580c;
 }
 
 @theme inline {
@@ -12,11 +30,25 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+
+  /* Dark theme colors */
+  --page-bg-start: #171717;
+  --page-bg-middle: #262626;
+  --page-bg-end: #1c1917;
+
+  --card-bg: #1c1917;
+  --card-bg-secondary: #292524;
+  --card-border: rgba(251, 191, 36, 0.2);
+
+  --text-primary: #fbbf24;
+  --text-secondary: rgba(251, 191, 36, 0.8);
+  --text-tertiary: #fcd34d;
+
+  --accent-amber: #f59e0b;
+  --accent-orange: #fb923c;
 }
 
 body {

@@ -65,6 +65,8 @@ Accounts are provisioned manually in Firebase Authentication. Create email/passw
 - **Recent Activity Feed**: Last 10 reading entries with book details
 - **Monthly Overview**: Calendar heatmap showing logged days, monthly stats, and completion percentage
 - **Book-Themed Design**: Warm, calm UI with amber/orange gradients and book icons
+- **Theme Toggle**: Choose light, dark, or system mode (respects OS preference by default)
+- **Mobile Responsive**: Optimized layout for all screen sizes with proper overflow handling
 
 ## Next Steps
 

@@ -2,6 +2,7 @@
 import {Geist, Geist_Mono} from "next/font/google";
 
 import {AuthProvider} from "./providers/AuthProvider";
+import {ThemeProvider} from "./providers/ThemeProvider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -25,9 +26,31 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                const theme = localStorage.getItem('theme') || 'system';
+                let isDark = false;
+
+                if (theme === 'dark') {
+                  isDark = true;
+                } else if (theme === 'system') {
+                  isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                }
+
+                document.documentElement.classList.add(isDark ? 'dark' : 'light');
+              })();
+            `,
+          }}
+        />
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <AuthProvider>{children}</AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

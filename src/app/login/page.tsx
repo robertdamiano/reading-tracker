@@ -7,6 +7,7 @@ import {FormEvent, Suspense, useEffect, useMemo, useState} from "react";
 
 import {auth} from "@/lib/firebase/client";
 import {useAuth} from "../providers/AuthProvider";
+import {useTheme} from "../providers/ThemeProvider";
 
 const allowedEmailList = (process.env.NEXT_PUBLIC_ALLOWED_EMAILS ?? "")
   .split(",")
@@ -37,6 +38,7 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const {user, loading} = useAuth();
+  const {theme, setTheme} = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -78,9 +80,26 @@ function LoginForm() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 p-6">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 dark:from-neutral-900 dark:via-stone-900 dark:to-neutral-900 p-6">
+      {/* Theme toggle button */}
+      <button
+        onClick={() => {
+          const themes: Array<"light" | "dark" | "system"> = ["light", "dark", "system"];
+          const currentIndex = themes.indexOf(theme);
+          const nextTheme = themes[(currentIndex + 1) % themes.length];
+          setTheme(nextTheme);
+        }}
+        className="absolute top-6 right-6 rounded-xl border-2 border-amber-200 dark:border-amber-700 bg-white/80 dark:bg-neutral-800/80 p-2 text-amber-900 dark:text-amber-300 transition hover:bg-white dark:hover:bg-neutral-800 hover:border-amber-300 dark:hover:border-amber-600 hover:shadow-md z-10"
+        title={`Theme: ${theme}`}
+        type="button"
+      >
+        {theme === "light" && <span className="text-xl">☀️</span>}
+        {theme === "dark" && <span className="text-xl">🌙</span>}
+        {theme === "system" && <span className="text-xl">💻</span>}
+      </button>
+
       {/* Book-themed decorative elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-10">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-10 dark:opacity-20">
         <div className="absolute top-10 left-10 text-8xl">📚</div>
         <div className="absolute bottom-10 right-10 text-8xl">📖</div>
         <div className="absolute top-1/2 left-1/4 text-6xl">📕</div>
@@ -89,26 +108,26 @@ function LoginForm() {
 
       <div className="relative w-full max-w-md">
         {/* Main card with book-like styling */}
-        <div className="rounded-2xl bg-gradient-to-br from-white to-amber-50/30 p-8 shadow-2xl backdrop-blur-sm border border-amber-100/50">
+        <div className="rounded-2xl bg-gradient-to-br from-white to-amber-50/30 dark:from-neutral-800 dark:to-stone-800/30 p-8 shadow-2xl backdrop-blur-sm border border-amber-100/50 dark:border-amber-800/50">
           {/* Header with book icon */}
           <div className="text-center mb-6">
             <div className="inline-block text-6xl mb-4 animate-bounce-slow">📚</div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-amber-700 to-orange-700 bg-clip-text text-transparent">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-amber-700 to-orange-700 dark:from-amber-400 dark:to-orange-400 bg-clip-text text-transparent">
               Welcome back!
             </h1>
-            <p className="mt-3 text-base text-amber-900/70 font-medium">
+            <p className="mt-3 text-base text-amber-900/70 dark:text-amber-400/70 font-medium">
               Sign in to continue your reading journey
             </p>
           </div>
 
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div>
-              <label className="block text-sm font-semibold text-amber-900/80 mb-2" htmlFor="email">
+              <label className="block text-sm font-semibold text-amber-900/80 dark:text-amber-400/80 mb-2" htmlFor="email">
                 Email
               </label>
               <input
                 autoComplete="email"
-                className="w-full rounded-xl border-2 border-amber-200/50 bg-white/80 p-3.5 text-sm shadow-sm transition-all focus:border-amber-400 focus:outline-none focus:ring-4 focus:ring-amber-200/50 focus:bg-white"
+                className="w-full rounded-xl border-2 border-amber-200/50 dark:border-amber-700/50 bg-white/80 dark:bg-neutral-700/80 text-slate-900 dark:text-neutral-100 p-3.5 text-sm shadow-sm transition-all focus:border-amber-400 dark:focus:border-amber-500 focus:outline-none focus:ring-4 focus:ring-amber-200/50 dark:focus:ring-amber-700/50 focus:bg-white dark:focus:bg-neutral-700"
                 disabled={isSubmitting}
                 id="email"
                 onChange={(event) => setEmail(event.target.value)}
@@ -118,12 +137,12 @@ function LoginForm() {
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-amber-900/80 mb-2" htmlFor="password">
+              <label className="block text-sm font-semibold text-amber-900/80 dark:text-amber-400/80 mb-2" htmlFor="password">
                 Password
               </label>
               <input
                 autoComplete="current-password"
-                className="w-full rounded-xl border-2 border-amber-200/50 bg-white/80 p-3.5 text-sm shadow-sm transition-all focus:border-amber-400 focus:outline-none focus:ring-4 focus:ring-amber-200/50 focus:bg-white"
+                className="w-full rounded-xl border-2 border-amber-200/50 dark:border-amber-700/50 bg-white/80 dark:bg-neutral-700/80 text-slate-900 dark:text-neutral-100 p-3.5 text-sm shadow-sm transition-all focus:border-amber-400 dark:focus:border-amber-500 focus:outline-none focus:ring-4 focus:ring-amber-200/50 dark:focus:ring-amber-700/50 focus:bg-white dark:focus:bg-neutral-700"
                 disabled={isSubmitting}
                 id="password"
                 onChange={(event) => setPassword(event.target.value)}
@@ -132,9 +151,9 @@ function LoginForm() {
                 value={password}
               />
             </div>
-            {error ? <p className="text-sm text-red-700 bg-red-50 p-3 rounded-lg border border-red-200">{error}</p> : null}
+            {error ? <p className="text-sm text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/30 p-3 rounded-lg border border-red-200 dark:border-red-700">{error}</p> : null}
             <button
-              className="w-full rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 py-3.5 text-sm font-bold text-white shadow-lg transition-all hover:shadow-xl hover:from-amber-500 hover:to-orange-500 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 dark:from-amber-700 dark:to-orange-700 py-3.5 text-sm font-bold text-white shadow-lg transition-all hover:shadow-xl hover:from-amber-500 hover:to-orange-500 dark:hover:from-amber-600 dark:hover:to-orange-600 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98]"
               disabled={isSubmitting}
               type="submit"
             >
@@ -149,7 +168,7 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-slate-100">Loading...</div>}>
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-slate-100 dark:bg-neutral-900 text-slate-700 dark:text-neutral-300">Loading...</div>}>
       <LoginForm />
     </Suspense>
   );

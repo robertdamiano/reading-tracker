@@ -12,12 +12,20 @@ interface Book {
   author: string;
 }
 
+/**
+ * Format date as YYYY-MM-DD in local timezone (not UTC)
+ * Prevents timezone offset issues where UTC date differs from local date
+ */
+function formatLocalDate(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 export function ReadingLogForm() {
   const {user} = useAuth();
-  const [logDate, setLogDate] = useState(() => {
-    const today = new Date();
-    return today.toISOString().split("T")[0];
-  });
+  const [logDate, setLogDate] = useState(() => formatLocalDate(new Date()));
   const [logType, setLogType] = useState<LogType>("minutes");
   const [value, setValue] = useState("");
   const [bookTitle, setBookTitle] = useState("");
@@ -138,7 +146,7 @@ export function ReadingLogForm() {
       setValue("");
       setBookTitle("");
       setBookAuthor("");
-      setLogDate(new Date().toISOString().split("T")[0]);
+      setLogDate(formatLocalDate(new Date()));
     } catch (error) {
       console.error("Failed to save reading log:", error);
       setMessage({type: "error", text: "Failed to save reading log. Please try again."});
@@ -148,12 +156,12 @@ export function ReadingLogForm() {
   }
 
   return (
-    <div className="rounded-2xl border-2 border-amber-200/50 bg-gradient-to-br from-white to-amber-50/30 p-6 shadow-xl backdrop-blur-sm">
-      <h2 className="text-xl font-bold text-amber-900 mb-4">Log Reading Session</h2>
+    <div className="rounded-2xl border-2 border-amber-200/50 dark:border-amber-800/50 bg-gradient-to-br from-white to-amber-50/30 dark:from-neutral-800 dark:to-stone-800/30 p-4 sm:p-6 shadow-xl backdrop-blur-sm">
+      <h2 className="text-xl font-bold text-amber-900 dark:text-amber-400 mb-4">Log Reading Session</h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="logDate" className="block text-sm font-medium text-slate-700 mb-1">
+          <label htmlFor="logDate" className="block text-sm font-medium text-slate-700 dark:text-neutral-300 mb-1">
             Date
           </label>
           <input
@@ -161,21 +169,21 @@ export function ReadingLogForm() {
             id="logDate"
             value={logDate}
             onChange={(e) => setLogDate(e.target.value)}
-            max={new Date().toISOString().split("T")[0]}
+            max={formatLocalDate(new Date())}
             required
-            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="w-full rounded-md border border-slate-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-slate-900 dark:text-neutral-100 px-3 py-2 text-sm focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400"
           />
         </div>
 
         <div>
-          <label htmlFor="logType" className="block text-sm font-medium text-slate-700 mb-1">
+          <label htmlFor="logType" className="block text-sm font-medium text-slate-700 dark:text-neutral-300 mb-1">
             Type
           </label>
           <select
             id="logType"
             value={logType}
             onChange={(e) => setLogType(e.target.value as LogType)}
-            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="w-full rounded-md border border-slate-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-slate-900 dark:text-neutral-100 px-3 py-2 text-sm focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400"
           >
             <option value="minutes">Minutes</option>
             <option value="pages">Pages</option>
@@ -184,7 +192,7 @@ export function ReadingLogForm() {
         </div>
 
         <div>
-          <label htmlFor="value" className="block text-sm font-medium text-slate-700 mb-1">
+          <label htmlFor="value" className="block text-sm font-medium text-slate-700 dark:text-neutral-300 mb-1">
             Value
           </label>
           <input
@@ -196,12 +204,12 @@ export function ReadingLogForm() {
             step={logType === "books" ? "1" : "0.1"}
             required
             placeholder={logType === "books" ? "1" : "30"}
-            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="w-full rounded-md border border-slate-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-slate-900 dark:text-neutral-100 px-3 py-2 text-sm focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400"
           />
         </div>
 
         <div className="relative">
-          <label htmlFor="bookTitle" className="block text-sm font-medium text-slate-700 mb-1">
+          <label htmlFor="bookTitle" className="block text-sm font-medium text-slate-700 dark:text-neutral-300 mb-1">
             Book Title
           </label>
           <input
@@ -213,10 +221,10 @@ export function ReadingLogForm() {
             onBlur={() => setTimeout(() => setShowTitleSuggestions(false), 200)}
             placeholder="Harry Potter And The Half-Blood Prince"
             required
-            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="w-full rounded-md border border-slate-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-slate-900 dark:text-neutral-100 px-3 py-2 text-sm focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400"
           />
           {showTitleSuggestions && titleSuggestions.length > 0 && (
-            <div className="absolute z-10 mt-1 w-full max-h-60 overflow-auto rounded-md border border-slate-200 bg-white shadow-lg">
+            <div className="absolute z-10 mt-1 w-full max-h-60 overflow-auto rounded-md border border-slate-200 dark:border-neutral-600 bg-white dark:bg-neutral-700 shadow-lg">
               {titleSuggestions.map((book, idx) => (
                 <button
                   key={idx}
@@ -226,10 +234,10 @@ export function ReadingLogForm() {
                     setBookAuthor(book.author);
                     setShowTitleSuggestions(false);
                   }}
-                  className="w-full px-3 py-2 text-left text-sm hover:bg-blue-50 focus:bg-blue-50 focus:outline-none"
+                  className="w-full px-3 py-2 text-left text-sm hover:bg-blue-50 dark:hover:bg-blue-900/30 focus:bg-blue-50 dark:focus:bg-blue-900/30 focus:outline-none"
                 >
-                  <div className="font-medium text-slate-900">{book.title}</div>
-                  <div className="text-xs text-slate-500">{book.author}</div>
+                  <div className="font-medium text-slate-900 dark:text-neutral-100">{book.title}</div>
+                  <div className="text-xs text-slate-500 dark:text-neutral-400">{book.author}</div>
                 </button>
               ))}
             </div>
@@ -237,7 +245,7 @@ export function ReadingLogForm() {
         </div>
 
         <div className="relative">
-          <label htmlFor="bookAuthor" className="block text-sm font-medium text-slate-700 mb-1">
+          <label htmlFor="bookAuthor" className="block text-sm font-medium text-slate-700 dark:text-neutral-300 mb-1">
             Book Author
           </label>
           <input
@@ -249,10 +257,10 @@ export function ReadingLogForm() {
             onBlur={() => setTimeout(() => setShowAuthorSuggestions(false), 200)}
             placeholder="J. K. Rowling"
             required
-            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="w-full rounded-md border border-slate-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-slate-900 dark:text-neutral-100 px-3 py-2 text-sm focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400"
           />
           {showAuthorSuggestions && authorSuggestions.length > 0 && (
-            <div className="absolute z-10 mt-1 w-full max-h-60 overflow-auto rounded-md border border-slate-200 bg-white shadow-lg">
+            <div className="absolute z-10 mt-1 w-full max-h-60 overflow-auto rounded-md border border-slate-200 dark:border-neutral-600 bg-white dark:bg-neutral-700 shadow-lg">
               {authorSuggestions.map((author, idx) => (
                 <button
                   key={idx}
@@ -261,7 +269,7 @@ export function ReadingLogForm() {
                     setBookAuthor(author);
                     setShowAuthorSuggestions(false);
                   }}
-                  className="w-full px-3 py-2 text-left text-sm hover:bg-blue-50 focus:bg-blue-50 focus:outline-none"
+                  className="w-full px-3 py-2 text-left text-sm text-slate-900 dark:text-neutral-100 hover:bg-blue-50 dark:hover:bg-blue-900/30 focus:bg-blue-50 dark:focus:bg-blue-900/30 focus:outline-none"
                 >
                   {author}
                 </button>
@@ -274,8 +282,8 @@ export function ReadingLogForm() {
           <div
             className={`rounded-md p-3 text-sm ${
               message.type === "success"
-                ? "bg-green-50 text-green-800 border border-green-200"
-                : "bg-red-50 text-red-800 border border-red-200"
+                ? "bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-700"
+                : "bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-700"
             }`}
           >
             {message.text}
@@ -285,7 +293,7 @@ export function ReadingLogForm() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className="w-full rounded-md bg-blue-600 dark:bg-blue-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 dark:hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isSubmitting ? "Saving..." : "Save Reading Log"}
         </button>
