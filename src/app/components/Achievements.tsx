@@ -158,7 +158,7 @@ export function Achievements() {
   }
 
   const completedAchievements = achievements.filter(a => a.isCompleted);
-  const inProgressAchievements = achievements.filter(a => !a.isCompleted).slice(0, 3);
+  const inProgressAchievements = achievements.filter(a => !a.isCompleted);
 
   return (
     <div className="rounded-2xl border-2 border-amber-200/50 dark:border-amber-800/50 bg-gradient-to-br from-white to-amber-50/30 dark:from-neutral-800 dark:to-stone-800/30 p-4 sm:p-6 shadow-xl backdrop-blur-sm flex flex-col">
@@ -179,10 +179,10 @@ export function Achievements() {
                 <div
                   key={achievement.id}
                   className="flex flex-col items-center p-3 rounded-lg bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 border border-amber-200 dark:border-amber-700"
-                  title={`${achievement.description} (${achievement.current.toLocaleString()} / ${achievement.target.toLocaleString()})`}
                 >
                   <span className="text-2xl mb-1">{achievement.icon}</span>
                   <span className="text-xs font-medium text-slate-900 dark:text-amber-300 text-center">{achievement.name}</span>
+                  <span className="text-[10px] text-slate-600 dark:text-amber-400/70 text-center mt-1">{achievement.description}</span>
                 </div>
               ))}
             </div>
