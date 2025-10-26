@@ -32,7 +32,10 @@ function getLogColor(logType: string): string {
 }
 
 function formatDate(dateString: string): string {
-  const date = new Date(dateString + 'T00:00:00Z');
+  // Parse date string as local date to avoid timezone issues
+  const [year, month, day] = dateString.split('-').map(Number);
+  const date = new Date(year, month - 1, day); // month is 0-indexed
+
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const yesterday = new Date(today);
