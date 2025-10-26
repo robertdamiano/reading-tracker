@@ -187,31 +187,6 @@ When testing changes:
 - Book library: Track unique books with covers
 - Reading goals: Monthly/yearly targets with progress
 
-## Agent Session History
-
-### Session 1: Initial Setup (Previous Agent)
-- Scaffolded Next.js 15 + TypeScript project
-- Set up Firebase (Firestore, Auth, Functions, Hosting)
-- Built core components (login, dashboard, form, stats)
-- Imported historical data (2,640+ entries)
-- Implemented GitHub Actions CI/CD
-- Added achievements, activity feed, monthly overview
-- Applied book-themed design
-
-### Session 2: Dark Theme + Mobile Fixes + Theme Toggle (2025-10-25)
-- Implemented dark theme with `dark:` variants on all components and states
-- Added theme toggle with three modes: light, dark, system (default)
-- Created ThemeProvider with localStorage persistence and blocking script to prevent FOUC
-- Configured Tailwind CSS v4 dark mode using `@variant dark` directive in globals.css
-- Updated CSS variables to use `.dark` class selector instead of media query
-- Fixed mobile overflow issues (horizontal and vertical)
-- Optimized responsive spacing (padding, gaps)
-- Made calendar grid mobile-friendly with horizontal scroll
-- Fixed timezone bug in date input (was showing UTC date instead of local date)
-- Created `formatLocalDate()` helper to format dates in local timezone
-- Updated documentation (README.md, HANDOVER.md)
-- Created this AGENTS.md file
-
 ## Development Tips
 
 1. **Local Development**: Dev server writes to production Firestore (no emulator config currently)
