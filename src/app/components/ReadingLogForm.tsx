@@ -224,7 +224,7 @@ export function ReadingLogForm() {
             className="w-full rounded-md border border-slate-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-slate-900 dark:text-neutral-100 px-3 py-2 text-sm focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400"
           />
           {showTitleSuggestions && titleSuggestions.length > 0 && (
-            <div className="absolute z-10 mt-1 w-full max-h-60 overflow-auto rounded-md border border-slate-200 dark:border-neutral-600 bg-white dark:bg-neutral-700 shadow-lg">
+            <div className="absolute z-50 mt-1 w-full max-h-60 overflow-auto rounded-md border border-slate-200 dark:border-neutral-600 bg-white dark:bg-neutral-700 shadow-lg">
               {titleSuggestions.map((book, idx) => (
                 <button
                   key={idx}
@@ -260,7 +260,7 @@ export function ReadingLogForm() {
             className="w-full rounded-md border border-slate-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-slate-900 dark:text-neutral-100 px-3 py-2 text-sm focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400"
           />
           {showAuthorSuggestions && authorSuggestions.length > 0 && (
-            <div className="absolute z-10 mt-1 w-full max-h-60 overflow-auto rounded-md border border-slate-200 dark:border-neutral-600 bg-white dark:bg-neutral-700 shadow-lg">
+            <div className="absolute z-50 mt-1 w-full max-h-60 overflow-auto rounded-md border border-slate-200 dark:border-neutral-600 bg-white dark:bg-neutral-700 shadow-lg">
               {authorSuggestions.map((author, idx) => (
                 <button
                   key={idx}
