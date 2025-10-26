@@ -156,10 +156,10 @@ export function ReadingLogForm() {
   }
 
   return (
-    <div className="rounded-2xl border-2 border-amber-200/50 dark:border-amber-800/50 bg-gradient-to-br from-white to-amber-50/30 dark:from-neutral-800 dark:to-stone-800/30 p-4 sm:p-6 shadow-xl backdrop-blur-sm">
+    <div className="relative z-20 rounded-2xl border-2 border-amber-200/50 dark:border-amber-800/50 bg-gradient-to-br from-white to-amber-50/30 dark:from-neutral-800 dark:to-stone-800/30 p-4 sm:p-6 shadow-xl backdrop-blur-sm overflow-visible">
       <h2 className="text-xl font-bold text-amber-900 dark:text-amber-400 mb-4">Log Reading Session</h2>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4 overflow-visible">
         <div>
           <label htmlFor="logDate" className="block text-sm font-medium text-slate-700 dark:text-neutral-300 mb-1">
             Date
@@ -224,7 +224,7 @@ export function ReadingLogForm() {
             className="w-full rounded-md border border-slate-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-slate-900 dark:text-neutral-100 px-3 py-2 text-sm focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400"
           />
           {showTitleSuggestions && titleSuggestions.length > 0 && (
-            <div className="absolute z-50 mt-1 w-full max-h-60 overflow-auto rounded-md border border-slate-200 dark:border-neutral-600 bg-white dark:bg-neutral-700 shadow-lg">
+            <div className="absolute z-[9999] mt-1 w-full max-h-60 overflow-auto rounded-md border border-slate-200 dark:border-neutral-600 bg-white dark:bg-neutral-700 shadow-lg">
               {titleSuggestions.map((book, idx) => (
                 <button
                   key={idx}
@@ -260,7 +260,7 @@ export function ReadingLogForm() {
             className="w-full rounded-md border border-slate-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-slate-900 dark:text-neutral-100 px-3 py-2 text-sm focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400"
           />
           {showAuthorSuggestions && authorSuggestions.length > 0 && (
-            <div className="absolute z-50 mt-1 w-full max-h-60 overflow-auto rounded-md border border-slate-200 dark:border-neutral-600 bg-white dark:bg-neutral-700 shadow-lg">
+            <div className="absolute z-[9999] mt-1 w-full max-h-60 overflow-auto rounded-md border border-slate-200 dark:border-neutral-600 bg-white dark:bg-neutral-700 shadow-lg">
               {authorSuggestions.map((author, idx) => (
                 <button
                   key={idx}
