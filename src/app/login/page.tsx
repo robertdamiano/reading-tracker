@@ -43,6 +43,8 @@ function LoginForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setSubmitting] = useState(false);
+  const [clickCount, setClickCount] = useState(0);
+  const [showEasterEgg, setShowEasterEgg] = useState(false);
 
   const redirectTo = useMemo(() => searchParams.get("redirectTo") ?? "/", [searchParams]);
 
@@ -80,54 +82,81 @@ function LoginForm() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 dark:from-neutral-900 dark:via-stone-900 dark:to-neutral-900 p-6">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 dark:from-neutral-900 dark:via-stone-900 dark:to-neutral-900 halloween:from-purple-950 halloween:via-orange-950 halloween:to-black p-6">
+      {/* Jason Voorhees Easter Egg */}
+      {showEasterEgg && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 animate-pulse" onClick={() => setShowEasterEgg(false)}>
+          <div className="text-center">
+            <div className="text-9xl mb-4">🔪</div>
+            <p className="text-6xl font-bold text-red-600 mb-4">JASON IS WATCHING</p>
+            <p className="text-2xl text-white">Friday the 13th... 13 clicks...</p>
+            <p className="text-lg text-gray-400 mt-4">Click anywhere to continue...</p>
+          </div>
+        </div>
+      )}
+
       {/* Theme toggle button */}
       <button
         onClick={() => {
-          const themes: Array<"light" | "dark" | "system"> = ["light", "dark", "system"];
+          const themes: Array<"light" | "dark" | "system" | "halloween"> = ["light", "dark", "system", "halloween"];
           const currentIndex = themes.indexOf(theme);
           const nextTheme = themes[(currentIndex + 1) % themes.length];
           setTheme(nextTheme);
+
+          // Easter egg counter
+          const newCount = clickCount + 1;
+          setClickCount(newCount);
+          if (newCount === 13) {
+            setShowEasterEgg(true);
+            setClickCount(0);
+          }
         }}
-        className="absolute top-6 right-6 rounded-xl border-2 border-amber-200 dark:border-amber-700 bg-white/80 dark:bg-neutral-800/80 p-2 text-amber-900 dark:text-amber-300 transition hover:bg-white dark:hover:bg-neutral-800 hover:border-amber-300 dark:hover:border-amber-600 hover:shadow-md z-10"
+        className="absolute top-6 right-6 rounded-xl border-2 border-amber-200 dark:border-amber-700 halloween:border-orange-500 bg-white/80 dark:bg-neutral-800/80 halloween:bg-purple-950/80 p-2 text-amber-900 dark:text-amber-300 halloween:text-orange-500 transition hover:bg-white dark:hover:bg-neutral-800 halloween:hover:bg-purple-900 hover:border-amber-300 dark:hover:border-amber-600 halloween:hover:border-orange-400 hover:shadow-md z-10"
         title={`Theme: ${theme}`}
         type="button"
       >
         {theme === "light" && <span className="text-xl">☀️</span>}
         {theme === "dark" && <span className="text-xl">🌙</span>}
         {theme === "system" && <span className="text-xl">💻</span>}
+        {theme === "halloween" && <span className="text-xl">🎃</span>}
       </button>
 
       {/* Book-themed decorative elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-10 dark:opacity-20">
-        <div className="absolute top-10 left-10 text-8xl">📚</div>
-        <div className="absolute bottom-10 right-10 text-8xl">📖</div>
-        <div className="absolute top-1/2 left-1/4 text-6xl">📕</div>
-        <div className="absolute top-1/3 right-1/4 text-6xl">📗</div>
+      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-10 dark:opacity-20 halloween:opacity-30">
+        <div className="absolute top-10 left-10 text-8xl halloween:hidden">📚</div>
+        <div className="absolute bottom-10 right-10 text-8xl halloween:hidden">📖</div>
+        <div className="absolute top-1/2 left-1/4 text-6xl halloween:hidden">📕</div>
+        <div className="absolute top-1/3 right-1/4 text-6xl halloween:hidden">📗</div>
+        {/* Halloween decorative elements */}
+        <div className="hidden halloween:block absolute top-10 left-10 text-8xl">🎃</div>
+        <div className="hidden halloween:block absolute bottom-10 right-10 text-8xl">👻</div>
+        <div className="hidden halloween:block absolute top-1/2 left-1/4 text-6xl">🦇</div>
+        <div className="hidden halloween:block absolute top-1/3 right-1/4 text-6xl">🕷️</div>
       </div>
 
       <div className="relative w-full max-w-md">
         {/* Main card with book-like styling */}
-        <div className="rounded-2xl bg-gradient-to-br from-white to-amber-50/30 dark:from-neutral-800 dark:to-stone-800/30 p-8 shadow-2xl backdrop-blur-sm border border-amber-100/50 dark:border-amber-800/50">
+        <div className="rounded-2xl bg-gradient-to-br from-white to-amber-50/30 dark:from-neutral-800 dark:to-stone-800/30 halloween:from-purple-950 halloween:to-orange-950/30 p-8 shadow-2xl backdrop-blur-sm border border-amber-100/50 dark:border-amber-800/50 halloween:border-orange-500/50">
           {/* Header with book icon */}
           <div className="text-center mb-6">
-            <div className="inline-block text-6xl mb-4 animate-bounce-slow">📚</div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-amber-700 to-orange-700 dark:from-amber-400 dark:to-orange-400 bg-clip-text text-transparent">
+            <div className="inline-block text-6xl mb-4 animate-bounce-slow halloween:hidden">📚</div>
+            <div className="hidden halloween:inline-block text-6xl mb-4 animate-bounce-slow">🎃</div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-amber-700 to-orange-700 dark:from-amber-400 dark:to-orange-400 halloween:from-orange-500 halloween:to-purple-500 bg-clip-text text-transparent">
               Welcome back!
             </h1>
-            <p className="mt-3 text-base text-amber-900/70 dark:text-amber-400/70 font-medium">
+            <p className="mt-3 text-base text-amber-900/70 dark:text-amber-400/70 halloween:text-orange-400 font-medium">
               Sign in to continue your reading journey
             </p>
           </div>
 
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div>
-              <label className="block text-sm font-semibold text-amber-900/80 dark:text-amber-400/80 mb-2" htmlFor="email">
+              <label className="block text-sm font-semibold text-amber-900/80 dark:text-amber-400/80 halloween:text-orange-400 mb-2" htmlFor="email">
                 Email
               </label>
               <input
                 autoComplete="email"
-                className="w-full rounded-xl border-2 border-amber-200/50 dark:border-amber-700/50 bg-white/80 dark:bg-neutral-700/80 text-slate-900 dark:text-neutral-100 p-3.5 text-sm shadow-sm transition-all focus:border-amber-400 dark:focus:border-amber-500 focus:outline-none focus:ring-4 focus:ring-amber-200/50 dark:focus:ring-amber-700/50 focus:bg-white dark:focus:bg-neutral-700"
+                className="w-full rounded-xl border-2 border-amber-200/50 dark:border-amber-700/50 halloween:border-orange-500/50 bg-white/80 dark:bg-neutral-700/80 halloween:bg-purple-900/80 text-slate-900 dark:text-neutral-100 halloween:text-orange-200 p-3.5 text-sm shadow-sm transition-all focus:border-amber-400 dark:focus:border-amber-500 halloween:focus:border-orange-400 focus:outline-none focus:ring-4 focus:ring-amber-200/50 dark:focus:ring-amber-700/50 halloween:focus:ring-orange-500/50 focus:bg-white dark:focus:bg-neutral-700 halloween:focus:bg-purple-900"
                 disabled={isSubmitting}
                 id="email"
                 onChange={(event) => setEmail(event.target.value)}
@@ -137,12 +166,12 @@ function LoginForm() {
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-amber-900/80 dark:text-amber-400/80 mb-2" htmlFor="password">
+              <label className="block text-sm font-semibold text-amber-900/80 dark:text-amber-400/80 halloween:text-orange-400 mb-2" htmlFor="password">
                 Password
               </label>
               <input
                 autoComplete="current-password"
-                className="w-full rounded-xl border-2 border-amber-200/50 dark:border-amber-700/50 bg-white/80 dark:bg-neutral-700/80 text-slate-900 dark:text-neutral-100 p-3.5 text-sm shadow-sm transition-all focus:border-amber-400 dark:focus:border-amber-500 focus:outline-none focus:ring-4 focus:ring-amber-200/50 dark:focus:ring-amber-700/50 focus:bg-white dark:focus:bg-neutral-700"
+                className="w-full rounded-xl border-2 border-amber-200/50 dark:border-amber-700/50 halloween:border-orange-500/50 bg-white/80 dark:bg-neutral-700/80 halloween:bg-purple-900/80 text-slate-900 dark:text-neutral-100 halloween:text-orange-200 p-3.5 text-sm shadow-sm transition-all focus:border-amber-400 dark:focus:border-amber-500 halloween:focus:border-orange-400 focus:outline-none focus:ring-4 focus:ring-amber-200/50 dark:focus:ring-amber-700/50 halloween:focus:ring-orange-500/50 focus:bg-white dark:focus:bg-neutral-700 halloween:focus:bg-purple-900"
                 disabled={isSubmitting}
                 id="password"
                 onChange={(event) => setPassword(event.target.value)}
@@ -151,9 +180,9 @@ function LoginForm() {
                 value={password}
               />
             </div>
-            {error ? <p className="text-sm text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/30 p-3 rounded-lg border border-red-200 dark:border-red-700">{error}</p> : null}
+            {error ? <p className="text-sm text-red-700 dark:text-red-400 halloween:text-red-400 bg-red-50 dark:bg-red-900/30 halloween:bg-red-900/50 p-3 rounded-lg border border-red-200 dark:border-red-700 halloween:border-red-600">{error}</p> : null}
             <button
-              className="w-full rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 dark:from-amber-700 dark:to-orange-700 py-3.5 text-sm font-bold text-white shadow-lg transition-all hover:shadow-xl hover:from-amber-500 hover:to-orange-500 dark:hover:from-amber-600 dark:hover:to-orange-600 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 dark:from-amber-700 dark:to-orange-700 halloween:from-orange-600 halloween:to-purple-600 py-3.5 text-sm font-bold text-white shadow-lg transition-all hover:shadow-xl hover:from-amber-500 hover:to-orange-500 dark:hover:from-amber-600 dark:hover:to-orange-600 halloween:hover:from-orange-500 halloween:hover:to-purple-500 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98]"
               disabled={isSubmitting}
               type="submit"
             >

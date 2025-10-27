@@ -33,15 +33,17 @@ export default function RootLayout({
             __html: `
               (function() {
                 const theme = localStorage.getItem('theme') || 'system';
-                let isDark = false;
+                let themeClass = 'light';
 
-                if (theme === 'dark') {
-                  isDark = true;
+                if (theme === 'halloween') {
+                  themeClass = 'halloween';
+                } else if (theme === 'dark') {
+                  themeClass = 'dark';
                 } else if (theme === 'system') {
-                  isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  themeClass = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
                 }
 
-                document.documentElement.classList.add(isDark ? 'dark' : 'light');
+                document.documentElement.classList.add(themeClass);
               })();
             `,
           }}
