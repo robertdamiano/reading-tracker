@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 @variant dark (&:where(.dark, .dark *));
+@variant halloween (&:where(.halloween, .halloween *));
 
 :root {
   --background: #ffffff;
@@ -49,6 +50,29 @@
 
   --accent-amber: #f59e0b;
   --accent-orange: #fb923c;
+}
+
+.halloween {
+  --background: #0f0a1f;
+  --foreground: #ff8800;
+
+  /* Halloween theme colors - spooky purples, oranges, and blacks */
+  --page-bg-start: #1a0e2e;
+  --page-bg-middle: #2d1b4e;
+  --page-bg-end: #0f0a1f;
+
+  --card-bg: #1f1635;
+  --card-bg-secondary: #2d1b4e;
+  --card-border: rgba(255, 136, 0, 0.4);
+
+  --text-primary: #ff8800;
+  --text-secondary: rgba(255, 136, 0, 0.9);
+  --text-tertiary: #ffaa00;
+
+  --accent-amber: #ff8800;
+  --accent-orange: #ff6600;
+  --accent-purple: #9b59b6;
+  --accent-green: #39ff14;
 }
 
 body {

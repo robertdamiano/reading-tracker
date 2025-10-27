@@ -2,24 +2,24 @@
 
 import {createContext, useContext, useEffect, useState} from "react";
 
-type Theme = "light" | "dark" | "system";
+type Theme = "light" | "dark" | "system" | "halloween";
 
 interface ThemeContextType {
   theme: Theme;
   setTheme: (theme: Theme) => void;
-  resolvedTheme: "light" | "dark";
+  resolvedTheme: "light" | "dark" | "halloween";
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({children}: {children: React.ReactNode}) {
   const [theme, setThemeState] = useState<Theme>("system");
-  const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
+  const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark" | "halloween">("light");
 
   // Initialize theme from localStorage
   useEffect(() => {
     const stored = localStorage.getItem("theme") as Theme | null;
-    if (stored && ["light", "dark", "system"].includes(stored)) {
+    if (stored && ["light", "dark", "system", "halloween"].includes(stored)) {
       setThemeState(stored);
     }
   }, []);
@@ -28,21 +28,24 @@ export function ThemeProvider({children}: {children: React.ReactNode}) {
   useEffect(() => {
     const root = window.document.documentElement;
 
-    const applyTheme = (isDark: boolean) => {
-      root.classList.remove("light", "dark");
-      root.classList.add(isDark ? "dark" : "light");
-      setResolvedTheme(isDark ? "dark" : "light");
+    const applyTheme = (themeClass: "light" | "dark" | "halloween") => {
+      root.classList.remove("light", "dark", "halloween");
+      root.classList.add(themeClass);
+      setResolvedTheme(themeClass);
     };
 
-    if (theme === "system") {
+    if (theme === "halloween") {
+      applyTheme("halloween");
+    } else if (theme === "system") {
       const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-      applyTheme(mediaQuery.matches);
+      const isDark = mediaQuery.matches;
+      applyTheme(isDark ? "dark" : "light");
 
-      const listener = (e: MediaQueryListEvent) => applyTheme(e.matches);
+      const listener = (e: MediaQueryListEvent) => applyTheme(e.matches ? "dark" : "light");
       mediaQuery.addEventListener("change", listener);
       return () => mediaQuery.removeEventListener("change", listener);
     } else {
-      applyTheme(theme === "dark");
+      applyTheme(theme === "dark" ? "dark" : "light");
     }
   }, [theme]);
 
