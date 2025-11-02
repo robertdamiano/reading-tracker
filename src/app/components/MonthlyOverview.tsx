@@ -178,11 +178,7 @@ export function MonthlyOverview() {
           <button
             onClick={handleNextMonth}
             disabled={isAtCurrentMonth}
-            className={`p-2 rounded-lg transition-colors ${
-              isAtCurrentMonth
-                ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed'
-                : 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 hover:bg-amber-200 dark:hover:bg-amber-900/50'
-            }`}
+            className="p-2 rounded-lg transition-colors bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 hover:bg-amber-200 dark:hover:bg-amber-900/50 disabled:bg-gray-100 disabled:dark:bg-gray-800 disabled:text-gray-400 disabled:dark:text-gray-600 disabled:cursor-not-allowed"
             title={isAtCurrentMonth ? "Can't go beyond current month" : "Next month"}
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
