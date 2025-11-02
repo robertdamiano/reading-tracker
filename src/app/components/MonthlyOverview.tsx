@@ -25,9 +25,33 @@ function getDaysInMonth(year: number, month: number): number {
 }
 
 export function MonthlyOverview() {
+  const [displayMonth, setDisplayMonth] = useState(() => getCurrentMonth());
   const [monthlyData, setMonthlyData] = useState<MonthlyData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const handlePreviousMonth = () => {
+    setDisplayMonth(prev => {
+      if (prev.month === 1) {
+        return {year: prev.year - 1, month: 12};
+      }
+      return {year: prev.year, month: prev.month - 1};
+    });
+  };
+
+  const handleNextMonth = () => {
+    const current = getCurrentMonth();
+    setDisplayMonth(prev => {
+      // Don't allow navigation beyond current month
+      if (prev.year === current.year && prev.month === current.month) {
+        return prev;
+      }
+      if (prev.month === 12) {
+        return {year: prev.year + 1, month: 1};
+      }
+      return {year: prev.year, month: prev.month + 1};
+    });
+  };
 
   useEffect(() => {
     async function fetchMonthlyData() {
@@ -35,7 +59,7 @@ export function MonthlyOverview() {
         setLoading(true);
         setError(null);
 
-        const {year, month} = getCurrentMonth();
+        const {year, month} = displayMonth;
         const daysInMonth = getDaysInMonth(year, month);
 
         const readerId = "luke";
@@ -89,7 +113,7 @@ export function MonthlyOverview() {
     }
 
     void fetchMonthlyData();
-  }, []);
+  }, [displayMonth]);
 
   if (loading) {
     return (
@@ -111,6 +135,10 @@ export function MonthlyOverview() {
 
   const monthName = new Date(monthlyData.year, monthlyData.month - 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
   const streakPercentage = (monthlyData.daysLogged / monthlyData.daysInMonth) * 100;
+
+  // Check if we can navigate to next month (not beyond current month)
+  const current = getCurrentMonth();
+  const isAtCurrentMonth = displayMonth.year === current.year && displayMonth.month === current.month;
 
   // Generate calendar grid
   const firstDayOfMonth = new Date(monthlyData.year, monthlyData.month - 1, 1).getDay();
@@ -134,9 +162,30 @@ export function MonthlyOverview() {
     <div className="rounded-2xl border-2 border-amber-200/50 dark:border-amber-800/50 bg-gradient-to-br from-white to-amber-50/30 dark:from-neutral-800 dark:to-stone-800/30 p-4 sm:p-6 shadow-xl backdrop-blur-sm">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-bold text-amber-900 dark:text-amber-400">Monthly Overview</h2>
-        <span className="text-sm font-semibold text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/30 px-3 py-1 rounded-full">
-          {monthName}
-        </span>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handlePreviousMonth}
+            className="p-2 rounded-lg bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 hover:bg-amber-200 dark:hover:bg-amber-900/50 transition-colors"
+            title="Previous month"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
+            </svg>
+          </button>
+          <span className="text-sm font-semibold text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/30 px-3 py-1 rounded-full min-w-[140px] text-center">
+            {monthName}
+          </span>
+          <button
+            onClick={handleNextMonth}
+            disabled={isAtCurrentMonth}
+            className="p-2 rounded-lg transition-colors bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 hover:bg-amber-200 dark:hover:bg-amber-900/50 disabled:bg-gray-100 disabled:dark:bg-gray-800 disabled:text-gray-400 disabled:dark:text-gray-600 disabled:cursor-not-allowed"
+            title={isAtCurrentMonth ? "Can't go beyond current month" : "Next month"}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+            </svg>
+          </button>
+        </div>
       </div>
 
       {/* Monthly Stats Grid */}
@@ -195,6 +244,7 @@ export function MonthlyOverview() {
             const dateStr = `${monthlyData.year}-${String(monthlyData.month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
             const isLogged = monthlyData.loggedDates.has(dateStr);
             const isToday = isCurrentMonth && day === today.getDate();
+            // Only mark as future if viewing current month and day is after today
             const isFuture = isCurrentMonth && day > today.getDate();
 
             return (
