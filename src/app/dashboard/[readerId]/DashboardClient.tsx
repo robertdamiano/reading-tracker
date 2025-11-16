@@ -152,8 +152,8 @@ export default function DashboardClient({readerId}: DashboardClientProps) {
         <div className="hidden christmas:block absolute top-1/4 left-1/4 text-6xl">🎅</div>
       </div>
 
-      <header className="relative mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6">
-        <div className="flex items-center gap-4">
+      <header className="relative mx-auto flex max-w-7xl flex-col gap-4 px-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
           <div>
             <p className="text-sm text-amber-700/70 dark:text-amber-400/70 christmas:text-orange-400/70">Signed in as</p>
             <p className="text-base font-semibold text-amber-900 dark:text-amber-300 christmas:text-orange-500">{user?.email}</p>
@@ -181,7 +181,7 @@ export default function DashboardClient({readerId}: DashboardClientProps) {
           )}
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={() => {
               const themes: Array<"light" | "dark" | "system" | "christmas"> = ["light", "dark", "system", "christmas"];
