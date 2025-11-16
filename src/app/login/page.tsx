@@ -83,13 +83,13 @@ function LoginForm() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 dark:from-neutral-900 dark:via-stone-900 dark:to-neutral-900 christmas:from-purple-950 christmas:via-orange-950 christmas:to-black p-6">
-      {/* Jason Voorhees Easter Egg */}
+      {/* Christmas Easter Egg - 12 clicks */}
       {showEasterEgg && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 animate-pulse" onClick={() => setShowEasterEgg(false)}>
-          <div className="text-center">
-            <div className="text-9xl mb-4">🔪</div>
-            <p className="text-6xl font-bold text-red-600 mb-4">JASON IS WATCHING</p>
-            <p className="text-2xl text-white">Friday the 13th... 13 clicks...</p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90" onClick={() => setShowEasterEgg(false)}>
+          <div className="text-center animate-pulse">
+            <div className="text-9xl mb-4 animate-bounce">🎄</div>
+            <p className="text-6xl font-bold text-green-500 mb-4">MERRY CHRISTMAS!</p>
+            <p className="text-2xl text-white">The 12 Days of Christmas... 12 clicks!</p>
             <p className="text-lg text-gray-400 mt-4">Click anywhere to continue...</p>
           </div>
         </div>
@@ -103,10 +103,10 @@ function LoginForm() {
           const nextTheme = themes[(currentIndex + 1) % themes.length];
           setTheme(nextTheme);
 
-          // Easter egg counter
+          // Easter egg counter - 12 clicks for Christmas
           const newCount = clickCount + 1;
           setClickCount(newCount);
-          if (newCount === 13) {
+          if (newCount === 12) {
             setShowEasterEgg(true);
             setClickCount(0);
           }
