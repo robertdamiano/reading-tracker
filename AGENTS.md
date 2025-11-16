@@ -55,7 +55,7 @@ Family reading tracker built with Next.js 15, TypeScript, Tailwind CSS, and Fire
 ### Firestore Structure
 ```
 readers/
-  {readerId}/           // e.g., "luke"
+  {readerId}/           // e.g., "reader-a"
     logs/
       {autoId}/
         readerId: string
@@ -128,6 +128,12 @@ Located in `scripts/` directory:
 - `calculate-full-streak.js` - Detailed streak analysis
 - `check-streak.js` - Show recent activity
 - `debug-totals.js` - Breakdown by type
+- `import-pdf.js` - Parses Beanstack “Log Summary” PDFs and writes entries to `readers/<readerId>/logs`. Usage:
+  ```bash
+  node scripts/import-pdf.js path/to/Log-Summary-ReaderA.pdf reader-a --dry-run
+  node scripts/import-pdf.js path/to/Log-Summary-ReaderB.pdf reader-b
+  ```
+  The parser handles multi-line titles/authors and page breaks internally, so no external helper repo is needed. Remove `--dry-run` to write data; each run also records `importBatches` metadata.
 
 All require Firebase service account key (gitignored).
 
@@ -150,7 +156,7 @@ npm run firebase:deploy
 
 ## Known Patterns & Conventions
 
-1. **Reader ID**: Currently hardcoded to `"luke"` throughout components (multi-reader support is a future enhancement)
+1. **Reader Selection**: Dashboard routing supports multiple reader IDs via `/dashboard/[readerId]`, but the legacy default logic still falls back to the first allowed reader when no explicit selection is provided.
 
 2. **Environment Variables**:
    - All Firebase config exposed via `NEXT_PUBLIC_*` (safe for client-side)

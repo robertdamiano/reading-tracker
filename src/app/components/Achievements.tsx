@@ -44,13 +44,13 @@ function calculateStreak(sortedDates: string[]): number {
 
 function generateAchievements(stats: Stats): Achievement[] {
   const achievements: Achievement[] = [
-    // Halloween-themed achievements
-    {id: "halloween-spooky", name: "Spooky Reader", description: "Read 666 pages", icon: "👻", category: "pages", target: 666, current: stats.totalPages, isCompleted: stats.totalPages >= 666},
-    {id: "halloween-midnight", name: "Midnight Scholar", description: "Read for 1313 minutes", icon: "🌙", category: "minutes", target: 1313, current: stats.totalMinutes, isCompleted: stats.totalMinutes >= 1313},
-    {id: "halloween-haunted", name: "Haunted Library", description: "Finished 13 books", icon: "🎃", category: "books", target: 13, current: stats.totalBooks, isCompleted: stats.totalBooks >= 13},
-    {id: "halloween-vampire", name: "Vampire's Knowledge", description: "100 day reading streak", icon: "🧛", category: "streak", target: 100, current: stats.currentStreak, isCompleted: stats.currentStreak >= 100},
-    {id: "halloween-witch", name: "Witch's Wisdom", description: "Read 3333 pages", icon: "🧙", category: "pages", target: 3333, current: stats.totalPages, isCompleted: stats.totalPages >= 3333},
-    {id: "halloween-monster", name: "Monster Reader", description: "Finished 31 books", icon: "👹", category: "books", target: 31, current: stats.totalBooks, isCompleted: stats.totalBooks >= 31},
+    // Christmas-themed achievements
+    {id: "christmas-star", name: "Shining Star", description: "Read 500 pages", icon: "⭐", category: "pages", target: 500, current: stats.totalPages, isCompleted: stats.totalPages >= 500},
+    {id: "christmas-night", name: "Silent Night Reader", description: "Read for 1225 minutes", icon: "🌙", category: "minutes", target: 1225, current: stats.totalMinutes, isCompleted: stats.totalMinutes >= 1225},
+    {id: "christmas-tree", name: "Christmas Tree", description: "Finished 12 books", icon: "🎄", category: "books", target: 12, current: stats.totalBooks, isCompleted: stats.totalBooks >= 12},
+    {id: "christmas-jolly", name: "Jolly Reader", description: "100 day reading streak", icon: "🎅", category: "streak", target: 100, current: stats.currentStreak, isCompleted: stats.currentStreak >= 100},
+    {id: "christmas-festive", name: "Festive Scholar", description: "Read 2500 pages", icon: "🎁", category: "pages", target: 2500, current: stats.totalPages, isCompleted: stats.totalPages >= 2500},
+    {id: "christmas-jingle", name: "Jingle All the Way", description: "Finished 25 books", icon: "🔔", category: "books", target: 25, current: stats.totalBooks, isCompleted: stats.totalBooks >= 25},
 
     // Streak milestones - much harder goals
     {id: "streak-1000", name: "Millennium Reader", description: "1,000 day reading streak", icon: "👑", category: "streak", target: 1000, current: stats.currentStreak, isCompleted: stats.currentStreak >= 1000},
@@ -85,7 +85,11 @@ function generateAchievements(stats: Stats): Achievement[] {
   return achievements;
 }
 
-export function Achievements() {
+interface AchievementsProps {
+  readerId: string;
+}
+
+export function Achievements({readerId}: AchievementsProps) {
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -96,7 +100,6 @@ export function Achievements() {
         setLoading(true);
         setError(null);
 
-        const readerId = "luke";
         const logsRef = collection(db, `readers/${readerId}/logs`);
         const snapshot = await getDocs(logsRef);
 
@@ -145,7 +148,7 @@ export function Achievements() {
     }
 
     void fetchAchievements();
-  }, []);
+  }, [readerId]);
 
   if (loading) {
     return (
@@ -169,10 +172,10 @@ export function Achievements() {
   const inProgressAchievements = achievements.filter(a => !a.isCompleted);
 
   return (
-    <div className="rounded-2xl border-2 border-amber-200/50 dark:border-amber-800/50 halloween:border-orange-500/50 bg-gradient-to-br from-white to-amber-50/30 dark:from-neutral-800 dark:to-stone-800/30 halloween:from-purple-950 halloween:to-orange-950/30 p-4 sm:p-6 shadow-xl backdrop-blur-sm flex flex-col">
+    <div className="rounded-2xl border-2 border-amber-200/50 dark:border-amber-800/50 christmas:border-orange-500/50 bg-gradient-to-br from-white to-amber-50/30 dark:from-neutral-800 dark:to-stone-800/30 christmas:from-purple-950 christmas:to-orange-950/30 p-4 sm:p-6 shadow-xl backdrop-blur-sm flex flex-col">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-bold text-amber-900 dark:text-amber-400 halloween:text-orange-500">Achievements</h2>
-        <span className="text-sm font-semibold text-amber-700 dark:text-amber-400 halloween:text-orange-400 bg-amber-100 dark:bg-amber-900/30 halloween:bg-orange-900/50 px-3 py-1 rounded-full">
+        <h2 className="text-xl font-bold text-amber-900 dark:text-amber-400 christmas:text-orange-500">Achievements</h2>
+        <span className="text-sm font-semibold text-amber-700 dark:text-amber-400 christmas:text-orange-400 bg-amber-100 dark:bg-amber-900/30 christmas:bg-orange-900/50 px-3 py-1 rounded-full">
           {completedAchievements.length} / {achievements.length}
         </span>
       </div>
@@ -181,16 +184,16 @@ export function Achievements() {
         {/* Completed Achievements */}
         {completedAchievements.length > 0 && (
           <div>
-            <h3 className="text-sm font-semibold text-amber-800 dark:text-amber-500 halloween:text-orange-500 mb-2">Unlocked</h3>
+            <h3 className="text-sm font-semibold text-amber-800 dark:text-amber-500 christmas:text-orange-500 mb-2">Unlocked</h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {completedAchievements.map(achievement => (
                 <div
                   key={achievement.id}
-                  className="flex flex-col items-center p-3 rounded-lg bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 halloween:from-orange-900/30 halloween:to-purple-900/30 border border-amber-200 dark:border-amber-700 halloween:border-orange-600"
+                  className="flex flex-col items-center p-3 rounded-lg bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 christmas:from-orange-900/30 christmas:to-purple-900/30 border border-amber-200 dark:border-amber-700 christmas:border-orange-600"
                 >
                   <span className="text-2xl mb-1">{achievement.icon}</span>
-                  <span className="text-xs font-medium text-slate-900 dark:text-amber-300 halloween:text-orange-400 text-center">{achievement.name}</span>
-                  <span className="text-[10px] text-slate-600 dark:text-amber-400/70 halloween:text-orange-300/70 text-center mt-1">{achievement.description}</span>
+                  <span className="text-xs font-medium text-slate-900 dark:text-amber-300 christmas:text-orange-400 text-center">{achievement.name}</span>
+                  <span className="text-[10px] text-slate-600 dark:text-amber-400/70 christmas:text-orange-300/70 text-center mt-1">{achievement.description}</span>
                 </div>
               ))}
             </div>
@@ -200,27 +203,27 @@ export function Achievements() {
         {/* Next Achievements to Unlock */}
         {inProgressAchievements.length > 0 && (
           <div>
-            <h3 className="text-sm font-semibold text-amber-800 dark:text-amber-500 halloween:text-orange-500 mb-2">In Progress</h3>
+            <h3 className="text-sm font-semibold text-amber-800 dark:text-amber-500 christmas:text-orange-500 mb-2">In Progress</h3>
             <div className="space-y-2">
               {inProgressAchievements.map(achievement => {
                 const progress = Math.min(100, (achievement.current / achievement.target) * 100);
                 return (
-                  <div key={achievement.id} className="p-3 rounded-lg bg-slate-50 dark:bg-neutral-700/50 halloween:bg-purple-900/30 border border-slate-200 dark:border-neutral-600 halloween:border-orange-700/50">
+                  <div key={achievement.id} className="p-3 rounded-lg bg-slate-50 dark:bg-neutral-700/50 christmas:bg-purple-900/30 border border-slate-200 dark:border-neutral-600 christmas:border-orange-700/50">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-lg opacity-50">{achievement.icon}</span>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-slate-900 dark:text-amber-300 halloween:text-orange-400">{achievement.name}</p>
-                        <p className="text-xs text-slate-500 dark:text-neutral-400 halloween:text-orange-300/70">{achievement.description}</p>
+                        <p className="text-sm font-medium text-slate-900 dark:text-amber-300 christmas:text-orange-400">{achievement.name}</p>
+                        <p className="text-xs text-slate-500 dark:text-neutral-400 christmas:text-orange-300/70">{achievement.description}</p>
                       </div>
                     </div>
                     <div className="mt-2">
-                      <div className="flex justify-between text-xs text-slate-600 dark:text-neutral-400 halloween:text-orange-300/70 mb-1">
+                      <div className="flex justify-between text-xs text-slate-600 dark:text-neutral-400 christmas:text-orange-300/70 mb-1">
                         <span>{achievement.current.toLocaleString()}</span>
                         <span>{achievement.target.toLocaleString()}</span>
                       </div>
-                      <div className="w-full bg-slate-200 dark:bg-neutral-600 halloween:bg-purple-950 rounded-full h-2">
+                      <div className="w-full bg-slate-200 dark:bg-neutral-600 christmas:bg-purple-950 rounded-full h-2">
                         <div
-                          className="bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-400 dark:to-blue-500 halloween:from-orange-500 halloween:to-purple-500 h-2 rounded-full transition-all"
+                          className="bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-400 dark:to-blue-500 christmas:from-orange-500 christmas:to-purple-500 h-2 rounded-full transition-all"
                           style={{width: `${progress}%`}}
                         />
                       </div>

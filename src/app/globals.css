@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @variant dark (&:where(.dark, .dark *));
-@variant halloween (&:where(.halloween, .halloween *));
+@variant christmas (&:where(.christmas, .christmas *));
 
 :root {
   --background: #ffffff;
@@ -52,27 +52,27 @@
   --accent-orange: #fb923c;
 }
 
-.halloween {
-  --background: #0f0a1f;
-  --foreground: #ff8800;
+.christmas {
+  --background: #0a1e0a;
+  --foreground: #f0f0f0;
 
-  /* Halloween theme colors - spooky purples, oranges, and blacks */
-  --page-bg-start: #1a0e2e;
-  --page-bg-middle: #2d1b4e;
-  --page-bg-end: #0f0a1f;
+  /* Christmas theme colors - festive reds, greens, and golds */
+  --page-bg-start: #0f1f0f;
+  --page-bg-middle: #1a2e1a;
+  --page-bg-end: #0a1e0a;
 
-  --card-bg: #1f1635;
-  --card-bg-secondary: #2d1b4e;
-  --card-border: rgba(255, 136, 0, 0.4);
+  --card-bg: #1a2e1a;
+  --card-bg-secondary: #2d4a2d;
+  --card-border: rgba(212, 175, 55, 0.5);
 
-  --text-primary: #ff8800;
-  --text-secondary: rgba(255, 136, 0, 0.9);
-  --text-tertiary: #ffaa00;
+  --text-primary: #d4af37;
+  --text-secondary: rgba(212, 175, 55, 0.9);
+  --text-tertiary: #ffd700;
 
-  --accent-amber: #ff8800;
-  --accent-orange: #ff6600;
-  --accent-purple: #9b59b6;
-  --accent-green: #39ff14;
+  --accent-red: #c41e3a;
+  --accent-green: #165b33;
+  --accent-gold: #d4af37;
+  --accent-white: #f0f0f0;
 }
 
 body {

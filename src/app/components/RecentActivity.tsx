@@ -24,10 +24,10 @@ function getLogIcon(logType: string): string {
 
 function getLogColor(logType: string): string {
   switch (logType) {
-    case "minutes": return "bg-blue-50 dark:bg-blue-900/20 halloween:bg-orange-900/30 border-blue-200 dark:border-blue-700 halloween:border-orange-600 text-blue-900 dark:text-blue-300 halloween:text-orange-300";
-    case "pages": return "bg-green-50 dark:bg-green-900/20 halloween:bg-purple-900/30 border-green-200 dark:border-green-700 halloween:border-purple-600 text-green-900 dark:text-green-300 halloween:text-purple-300";
-    case "books": return "bg-purple-50 dark:bg-purple-900/20 halloween:bg-orange-900/40 border-purple-200 dark:border-purple-700 halloween:border-orange-700 text-purple-900 dark:text-purple-300 halloween:text-orange-400";
-    default: return "bg-slate-50 dark:bg-neutral-700 halloween:bg-purple-900/20 border-slate-200 dark:border-neutral-600 halloween:border-orange-700 text-slate-900 dark:text-neutral-200 halloween:text-orange-300";
+    case "minutes": return "bg-blue-50 dark:bg-blue-900/20 christmas:bg-orange-900/30 border-blue-200 dark:border-blue-700 christmas:border-orange-600 text-blue-900 dark:text-blue-300 christmas:text-orange-300";
+    case "pages": return "bg-green-50 dark:bg-green-900/20 christmas:bg-purple-900/30 border-green-200 dark:border-green-700 christmas:border-purple-600 text-green-900 dark:text-green-300 christmas:text-purple-300";
+    case "books": return "bg-purple-50 dark:bg-purple-900/20 christmas:bg-orange-900/40 border-purple-200 dark:border-purple-700 christmas:border-orange-700 text-purple-900 dark:text-purple-300 christmas:text-orange-400";
+    default: return "bg-slate-50 dark:bg-neutral-700 christmas:bg-purple-900/20 border-slate-200 dark:border-neutral-600 christmas:border-orange-700 text-slate-900 dark:text-neutral-200 christmas:text-orange-300";
   }
 }
 
@@ -52,7 +52,11 @@ function formatDate(dateString: string): string {
   }
 }
 
-export function RecentActivity() {
+interface RecentActivityProps {
+  readerId: string;
+}
+
+export function RecentActivity({readerId}: RecentActivityProps) {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -63,7 +67,6 @@ export function RecentActivity() {
         setLoading(true);
         setError(null);
 
-        const readerId = "luke";
         const logsRef = collection(db, `readers/${readerId}/logs`);
 
         // Fetch all logs and sort client-side (Firestore needs index for orderBy)
@@ -98,7 +101,7 @@ export function RecentActivity() {
     }
 
     void fetchRecentLogs();
-  }, []);
+  }, [readerId]);
 
   if (loading) {
     return (
@@ -119,11 +122,11 @@ export function RecentActivity() {
   }
 
   return (
-    <div className="rounded-2xl border-2 border-amber-200/50 dark:border-amber-800/50 halloween:border-orange-500/50 bg-gradient-to-br from-white to-amber-50/30 dark:from-neutral-800 dark:to-stone-800/30 halloween:from-purple-950 halloween:to-orange-950/30 p-4 sm:p-6 shadow-xl backdrop-blur-sm flex flex-col">
-      <h2 className="text-xl font-bold text-amber-900 dark:text-amber-400 halloween:text-orange-500 mb-4">Recent Activity</h2>
+    <div className="rounded-2xl border-2 border-amber-200/50 dark:border-amber-800/50 christmas:border-orange-500/50 bg-gradient-to-br from-white to-amber-50/30 dark:from-neutral-800 dark:to-stone-800/30 christmas:from-purple-950 christmas:to-orange-950/30 p-4 sm:p-6 shadow-xl backdrop-blur-sm flex flex-col">
+      <h2 className="text-xl font-bold text-amber-900 dark:text-amber-400 christmas:text-orange-500 mb-4">Recent Activity</h2>
 
       {logs.length === 0 ? (
-        <p className="text-sm text-amber-700 dark:text-amber-500 halloween:text-orange-400">No reading logs yet. Start logging your reading!</p>
+        <p className="text-sm text-amber-700 dark:text-amber-500 christmas:text-orange-400">No reading logs yet. Start logging your reading!</p>
       ) : (
         <div className="space-y-2 max-h-[500px] overflow-y-auto">
           {logs.map(log => (

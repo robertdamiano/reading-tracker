@@ -35,8 +35,8 @@ export default function RootLayout({
                 const theme = localStorage.getItem('theme') || 'system';
                 let themeClass = 'light';
 
-                if (theme === 'halloween') {
-                  themeClass = 'halloween';
+                if (theme === 'christmas') {
+                  themeClass = 'christmas';
                 } else if (theme === 'dark') {
                   themeClass = 'dark';
                 } else if (theme === 'system') {

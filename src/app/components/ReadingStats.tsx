@@ -39,7 +39,11 @@ function calculateStreak(sortedDates: string[]): number {
   return streak;
 }
 
-export function ReadingStats() {
+interface ReadingStatsProps {
+  readerId: string;
+}
+
+export function ReadingStats({readerId}: ReadingStatsProps) {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -50,8 +54,7 @@ export function ReadingStats() {
         setLoading(true);
         setError(null);
 
-        // Fetch all logs for luke
-        const readerId = "luke";
+        // Fetch all logs for the reader
         const logsRef = collection(db, `readers/${readerId}/logs`);
         const snapshot = await getDocs(logsRef);
 
@@ -109,7 +112,7 @@ export function ReadingStats() {
     }
 
     void fetchStats();
-  }, []);
+  }, [readerId]);
 
   if (loading) {
     return (
@@ -134,28 +137,28 @@ export function ReadingStats() {
   }
 
   return (
-    <div className="rounded-2xl border-2 border-amber-200/50 dark:border-amber-800/50 halloween:border-orange-500/50 bg-gradient-to-br from-white to-amber-50/30 dark:from-neutral-800 dark:to-stone-800/30 halloween:from-purple-950 halloween:to-orange-950/30 p-4 sm:p-6 shadow-xl backdrop-blur-sm">
-      <h2 className="text-xl font-bold text-amber-900 dark:text-amber-400 halloween:text-orange-500 mb-4">Reading Statistics</h2>
+    <div className="rounded-2xl border-2 border-amber-200/50 dark:border-amber-800/50 christmas:border-orange-500/50 bg-gradient-to-br from-white to-amber-50/30 dark:from-neutral-800 dark:to-stone-800/30 christmas:from-purple-950 christmas:to-orange-950/30 p-4 sm:p-6 shadow-xl backdrop-blur-sm">
+      <h2 className="text-xl font-bold text-amber-900 dark:text-amber-400 christmas:text-orange-500 mb-4">Reading Statistics</h2>
       <div className="space-y-3">
-        <div className="flex justify-between items-center py-2 border-b border-slate-100 dark:border-neutral-700 halloween:border-orange-900/50">
-          <span className="text-sm font-medium text-slate-700 dark:text-neutral-300 halloween:text-orange-300">Current Streak</span>
-          <span className="text-base font-semibold text-slate-900 dark:text-amber-300 halloween:text-orange-400">{stats.currentStreak}</span>
+        <div className="flex justify-between items-center py-2 border-b border-slate-100 dark:border-neutral-700 christmas:border-orange-900/50">
+          <span className="text-sm font-medium text-slate-700 dark:text-neutral-300 christmas:text-orange-300">Current Streak</span>
+          <span className="text-base font-semibold text-slate-900 dark:text-amber-300 christmas:text-orange-400">{stats.currentStreak}</span>
         </div>
-        <div className="flex justify-between items-center py-2 border-b border-slate-100 dark:border-neutral-700 halloween:border-orange-900/50">
-          <span className="text-sm font-medium text-slate-700 dark:text-neutral-300 halloween:text-orange-300">Last Log Date</span>
-          <span className="text-base font-semibold text-slate-900 dark:text-amber-300 halloween:text-orange-400">{stats.lastLogDate}</span>
+        <div className="flex justify-between items-center py-2 border-b border-slate-100 dark:border-neutral-700 christmas:border-orange-900/50">
+          <span className="text-sm font-medium text-slate-700 dark:text-neutral-300 christmas:text-orange-300">Last Log Date</span>
+          <span className="text-base font-semibold text-slate-900 dark:text-amber-300 christmas:text-orange-400">{stats.lastLogDate}</span>
         </div>
-        <div className="flex justify-between items-center py-2 border-b border-slate-100 dark:border-neutral-700 halloween:border-orange-900/50">
-          <span className="text-sm font-medium text-slate-700 dark:text-neutral-300 halloween:text-orange-300">Total Minutes</span>
-          <span className="text-base font-semibold text-slate-900 dark:text-amber-300 halloween:text-orange-400">{stats.totalMinutes.toLocaleString()}</span>
+        <div className="flex justify-between items-center py-2 border-b border-slate-100 dark:border-neutral-700 christmas:border-orange-900/50">
+          <span className="text-sm font-medium text-slate-700 dark:text-neutral-300 christmas:text-orange-300">Total Minutes</span>
+          <span className="text-base font-semibold text-slate-900 dark:text-amber-300 christmas:text-orange-400">{stats.totalMinutes.toLocaleString()}</span>
         </div>
-        <div className="flex justify-between items-center py-2 border-b border-slate-100 dark:border-neutral-700 halloween:border-orange-900/50">
-          <span className="text-sm font-medium text-slate-700 dark:text-neutral-300 halloween:text-orange-300">Total Pages</span>
-          <span className="text-base font-semibold text-slate-900 dark:text-amber-300 halloween:text-orange-400">{stats.totalPages.toLocaleString()}</span>
+        <div className="flex justify-between items-center py-2 border-b border-slate-100 dark:border-neutral-700 christmas:border-orange-900/50">
+          <span className="text-sm font-medium text-slate-700 dark:text-neutral-300 christmas:text-orange-300">Total Pages</span>
+          <span className="text-base font-semibold text-slate-900 dark:text-amber-300 christmas:text-orange-400">{stats.totalPages.toLocaleString()}</span>
         </div>
         <div className="flex justify-between items-center py-2">
-          <span className="text-sm font-medium text-slate-700 dark:text-neutral-300 halloween:text-orange-300">Total Books</span>
-          <span className="text-base font-semibold text-slate-900 dark:text-amber-300 halloween:text-orange-400">{stats.totalBooks}</span>
+          <span className="text-sm font-medium text-slate-700 dark:text-neutral-300 christmas:text-orange-300">Total Books</span>
+          <span className="text-base font-semibold text-slate-900 dark:text-amber-300 christmas:text-orange-400">{stats.totalBooks}</span>
         </div>
       </div>
     </div>

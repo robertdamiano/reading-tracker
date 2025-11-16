@@ -68,6 +68,20 @@ Accounts are provisioned manually in Firebase Authentication. Create email/passw
 - **Theme Toggle**: Choose light, dark, or system mode (respects OS preference by default)
 - **Mobile Responsive**: Optimized layout for all screen sizes with proper overflow handling
 
+### PDF Imports
+
+Use the built-in CLI to import Beanstack log summary PDFs directly into Firestore:
+
+```bash
+# Preview the parsed rows without writing data
+node scripts/import-pdf.js path/to/Log-Summary-ReaderA.pdf reader-a --dry-run
+
+# Run without --dry-run to import into readers/<readerId>/logs
+node scripts/import-pdf.js path/to/Log-Summary-ReaderB.pdf reader-b
+```
+
+Each row is stored as `readers/<readerId>/logs` with matching `importBatches` metadata. The parser handles multi-line titles/authors and page breaks, so no external scripts/repositories are required.
+
 ## Next Steps
 
 - Performance optimization: Materialize stats into `readers/{readerId}/dailyStats` for faster loads

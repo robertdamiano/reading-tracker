@@ -2,18 +2,61 @@ rules_version='2'
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Helper: Check if user is authenticated and has an appUsers document
     function isFamilyMember() {
       return request.auth != null &&
         exists(/databases/$(database)/documents/appUsers/$(request.auth.uid));
     }
 
+    // Helper: Get user profile data
+    function getUserProfile() {
+      return get(/databases/$(database)/documents/appUsers/$(request.auth.uid)).data;
+    }
+
+    // Helper: Check if user is a parent
+    function isParent() {
+      return isFamilyMember() && getUserProfile().role == 'parent';
+    }
+
+    // Helper: Check if user is a child with access to a specific reader
+    function isChildWithAccess(readerId) {
+      return isFamilyMember() &&
+             getUserProfile().role == 'child' &&
+             getUserProfile().readerId == readerId;
+    }
+
+    // Helper: Check if user has access to a specific reader (parent or assigned child)
+    function hasReaderAccess(readerId) {
+      return isParent() || isChildWithAccess(readerId);
+    }
+
+    // appUsers collection - user profiles and roles
     match /appUsers/{uid} {
       allow read: if isFamilyMember();
       allow write: if request.auth != null && request.auth.uid == uid;
     }
 
+    // readers collection - reader profiles
+    match /readers/{readerId} {
+      allow read: if hasReaderAccess(readerId);
+      allow write: if isParent(); // Only parents can modify reader profiles
+    }
+
+    // Reader logs - reading activity data
+    match /readers/{readerId}/logs/{logId} {
+      allow read: if hasReaderAccess(readerId);
+      allow write: if hasReaderAccess(readerId); // Both parents and assigned children can log
+    }
+
+    // Import batches - metadata for bulk imports
+    match /readers/{readerId}/importBatches/{batchId} {
+      allow read: if hasReaderAccess(readerId);
+      allow write: if isParent(); // Only parents can import data
+    }
+
+    // Deny all other documents
     match /{document=**} {
-      allow read, write: if isFamilyMember();
+      allow read, write: if false;
     }
   }
 }

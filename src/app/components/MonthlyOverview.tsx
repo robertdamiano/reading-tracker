@@ -24,7 +24,11 @@ function getDaysInMonth(year: number, month: number): number {
   return new Date(year, month, 0).getDate();
 }
 
-export function MonthlyOverview() {
+interface MonthlyOverviewProps {
+  readerId: string;
+}
+
+export function MonthlyOverview({readerId}: MonthlyOverviewProps) {
   const [displayMonth, setDisplayMonth] = useState(() => getCurrentMonth());
   const [monthlyData, setMonthlyData] = useState<MonthlyData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -62,7 +66,6 @@ export function MonthlyOverview() {
         const {year, month} = displayMonth;
         const daysInMonth = getDaysInMonth(year, month);
 
-        const readerId = "luke";
         const logsRef = collection(db, `readers/${readerId}/logs`);
         const snapshot = await getDocs(logsRef);
 
@@ -113,7 +116,7 @@ export function MonthlyOverview() {
     }
 
     void fetchMonthlyData();
-  }, [displayMonth]);
+  }, [displayMonth, readerId]);
 
   if (loading) {
     return (

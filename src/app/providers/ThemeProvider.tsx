@@ -2,24 +2,24 @@
 
 import {createContext, useContext, useEffect, useState} from "react";
 
-type Theme = "light" | "dark" | "system" | "halloween";
+type Theme = "light" | "dark" | "system" | "christmas";
 
 interface ThemeContextType {
   theme: Theme;
   setTheme: (theme: Theme) => void;
-  resolvedTheme: "light" | "dark" | "halloween";
+  resolvedTheme: "light" | "dark" | "christmas";
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({children}: {children: React.ReactNode}) {
   const [theme, setThemeState] = useState<Theme>("system");
-  const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark" | "halloween">("light");
+  const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark" | "christmas">("light");
 
   // Initialize theme from localStorage
   useEffect(() => {
     const stored = localStorage.getItem("theme") as Theme | null;
-    if (stored && ["light", "dark", "system", "halloween"].includes(stored)) {
+    if (stored && ["light", "dark", "system", "christmas"].includes(stored)) {
       setThemeState(stored);
     }
   }, []);
@@ -28,14 +28,14 @@ export function ThemeProvider({children}: {children: React.ReactNode}) {
   useEffect(() => {
     const root = window.document.documentElement;
 
-    const applyTheme = (themeClass: "light" | "dark" | "halloween") => {
-      root.classList.remove("light", "dark", "halloween");
+    const applyTheme = (themeClass: "light" | "dark" | "christmas") => {
+      root.classList.remove("light", "dark", "christmas");
       root.classList.add(themeClass);
       setResolvedTheme(themeClass);
     };
 
-    if (theme === "halloween") {
-      applyTheme("halloween");
+    if (theme === "christmas") {
+      applyTheme("christmas");
     } else if (theme === "system") {
       const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
       const isDark = mediaQuery.matches;

@@ -23,7 +23,11 @@ function formatLocalDate(date: Date): string {
   return `${year}-${month}-${day}`;
 }
 
-export function ReadingLogForm() {
+interface ReadingLogFormProps {
+  readerId: string;
+}
+
+export function ReadingLogForm({readerId}: ReadingLogFormProps) {
   const {user} = useAuth();
   const [logDate, setLogDate] = useState(() => formatLocalDate(new Date()));
   const [logType, setLogType] = useState<LogType>("minutes");
@@ -42,7 +46,6 @@ export function ReadingLogForm() {
   useEffect(() => {
     async function fetchBooks() {
       try {
-        const readerId = "luke";
         const logsRef = collection(db, `readers/${readerId}/logs`);
         const snapshot = await getDocs(logsRef);
 
@@ -68,7 +71,7 @@ export function ReadingLogForm() {
     }
 
     void fetchBooks();
-  }, []);
+  }, [readerId]);
 
   // Filter title suggestions as user types
   useEffect(() => {
@@ -113,7 +116,6 @@ export function ReadingLogForm() {
     setMessage(null);
 
     try {
-      const readerId = "luke"; // TODO: make this dynamic when supporting multiple readers
       const logsRef = collection(db, `readers/${readerId}/logs`);
 
       const logData = {
@@ -156,12 +158,12 @@ export function ReadingLogForm() {
   }
 
   return (
-    <div className="relative z-20 rounded-2xl border-2 border-amber-200/50 dark:border-amber-800/50 halloween:border-orange-500/50 bg-gradient-to-br from-white to-amber-50/30 dark:from-neutral-800 dark:to-stone-800/30 halloween:from-purple-950 halloween:to-orange-950/30 p-4 sm:p-6 shadow-xl backdrop-blur-sm overflow-visible">
-      <h2 className="text-xl font-bold text-amber-900 dark:text-amber-400 halloween:text-orange-500 mb-4">Log Reading Session</h2>
+    <div className="relative z-20 rounded-2xl border-2 border-amber-200/50 dark:border-amber-800/50 christmas:border-orange-500/50 bg-gradient-to-br from-white to-amber-50/30 dark:from-neutral-800 dark:to-stone-800/30 christmas:from-purple-950 christmas:to-orange-950/30 p-4 sm:p-6 shadow-xl backdrop-blur-sm overflow-visible">
+      <h2 className="text-xl font-bold text-amber-900 dark:text-amber-400 christmas:text-orange-500 mb-4">Log Reading Session</h2>
 
       <form onSubmit={handleSubmit} className="space-y-4 overflow-visible">
         <div>
-          <label htmlFor="logDate" className="block text-sm font-medium text-slate-700 dark:text-neutral-300 halloween:text-orange-300 mb-1">
+          <label htmlFor="logDate" className="block text-sm font-medium text-slate-700 dark:text-neutral-300 christmas:text-orange-300 mb-1">
             Date
           </label>
           <input
@@ -171,19 +173,19 @@ export function ReadingLogForm() {
             onChange={(e) => setLogDate(e.target.value)}
             max={formatLocalDate(new Date())}
             required
-            className="w-full rounded-md border border-slate-300 dark:border-neutral-600 halloween:border-orange-700 bg-white dark:bg-neutral-700 halloween:bg-purple-900/80 text-slate-900 dark:text-neutral-100 halloween:text-orange-200 px-3 py-2 text-sm focus:border-blue-500 dark:focus:border-blue-400 halloween:focus:border-orange-400 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400 halloween:focus:ring-orange-500"
+            className="w-full rounded-md border border-slate-300 dark:border-neutral-600 christmas:border-orange-700 bg-white dark:bg-neutral-700 christmas:bg-purple-900/80 text-slate-900 dark:text-neutral-100 christmas:text-orange-200 px-3 py-2 text-sm focus:border-blue-500 dark:focus:border-blue-400 christmas:focus:border-orange-400 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400 christmas:focus:ring-orange-500"
           />
         </div>
 
         <div>
-          <label htmlFor="logType" className="block text-sm font-medium text-slate-700 dark:text-neutral-300 halloween:text-orange-300 mb-1">
+          <label htmlFor="logType" className="block text-sm font-medium text-slate-700 dark:text-neutral-300 christmas:text-orange-300 mb-1">
             Type
           </label>
           <select
             id="logType"
             value={logType}
             onChange={(e) => setLogType(e.target.value as LogType)}
-            className="w-full rounded-md border border-slate-300 dark:border-neutral-600 halloween:border-orange-700 bg-white dark:bg-neutral-700 halloween:bg-purple-900/80 text-slate-900 dark:text-neutral-100 halloween:text-orange-200 px-3 py-2 text-sm focus:border-blue-500 dark:focus:border-blue-400 halloween:focus:border-orange-400 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400 halloween:focus:ring-orange-500"
+            className="w-full rounded-md border border-slate-300 dark:border-neutral-600 christmas:border-orange-700 bg-white dark:bg-neutral-700 christmas:bg-purple-900/80 text-slate-900 dark:text-neutral-100 christmas:text-orange-200 px-3 py-2 text-sm focus:border-blue-500 dark:focus:border-blue-400 christmas:focus:border-orange-400 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400 christmas:focus:ring-orange-500"
           >
             <option value="minutes">Minutes</option>
             <option value="pages">Pages</option>
@@ -192,7 +194,7 @@ export function ReadingLogForm() {
         </div>
 
         <div>
-          <label htmlFor="value" className="block text-sm font-medium text-slate-700 dark:text-neutral-300 halloween:text-orange-300 mb-1">
+          <label htmlFor="value" className="block text-sm font-medium text-slate-700 dark:text-neutral-300 christmas:text-orange-300 mb-1">
             Value
           </label>
           <input
@@ -204,12 +206,12 @@ export function ReadingLogForm() {
             step={logType === "books" ? "1" : "0.1"}
             required
             placeholder={logType === "books" ? "1" : "30"}
-            className="w-full rounded-md border border-slate-300 dark:border-neutral-600 halloween:border-orange-700 bg-white dark:bg-neutral-700 halloween:bg-purple-900/80 text-slate-900 dark:text-neutral-100 halloween:text-orange-200 px-3 py-2 text-sm focus:border-blue-500 dark:focus:border-blue-400 halloween:focus:border-orange-400 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400 halloween:focus:ring-orange-500"
+            className="w-full rounded-md border border-slate-300 dark:border-neutral-600 christmas:border-orange-700 bg-white dark:bg-neutral-700 christmas:bg-purple-900/80 text-slate-900 dark:text-neutral-100 christmas:text-orange-200 px-3 py-2 text-sm focus:border-blue-500 dark:focus:border-blue-400 christmas:focus:border-orange-400 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400 christmas:focus:ring-orange-500"
           />
         </div>
 
         <div className="relative">
-          <label htmlFor="bookTitle" className="block text-sm font-medium text-slate-700 dark:text-neutral-300 halloween:text-orange-300 mb-1">
+          <label htmlFor="bookTitle" className="block text-sm font-medium text-slate-700 dark:text-neutral-300 christmas:text-orange-300 mb-1">
             Book Title
           </label>
           <input
@@ -221,7 +223,7 @@ export function ReadingLogForm() {
             onBlur={() => setTimeout(() => setShowTitleSuggestions(false), 200)}
             placeholder="Harry Potter And The Half-Blood Prince"
             required
-            className="w-full rounded-md border border-slate-300 dark:border-neutral-600 halloween:border-orange-700 bg-white dark:bg-neutral-700 halloween:bg-purple-900/80 text-slate-900 dark:text-neutral-100 halloween:text-orange-200 px-3 py-2 text-sm focus:border-blue-500 dark:focus:border-blue-400 halloween:focus:border-orange-400 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400 halloween:focus:ring-orange-500"
+            className="w-full rounded-md border border-slate-300 dark:border-neutral-600 christmas:border-orange-700 bg-white dark:bg-neutral-700 christmas:bg-purple-900/80 text-slate-900 dark:text-neutral-100 christmas:text-orange-200 px-3 py-2 text-sm focus:border-blue-500 dark:focus:border-blue-400 christmas:focus:border-orange-400 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400 christmas:focus:ring-orange-500"
           />
           {showTitleSuggestions && titleSuggestions.length > 0 && (
             <div className="absolute z-[9999] mt-1 w-full max-h-60 overflow-auto rounded-md border border-slate-200 dark:border-neutral-600 bg-white dark:bg-neutral-700 shadow-lg">
@@ -245,7 +247,7 @@ export function ReadingLogForm() {
         </div>
 
         <div className="relative">
-          <label htmlFor="bookAuthor" className="block text-sm font-medium text-slate-700 dark:text-neutral-300 halloween:text-orange-300 mb-1">
+          <label htmlFor="bookAuthor" className="block text-sm font-medium text-slate-700 dark:text-neutral-300 christmas:text-orange-300 mb-1">
             Book Author
           </label>
           <input
@@ -257,7 +259,7 @@ export function ReadingLogForm() {
             onBlur={() => setTimeout(() => setShowAuthorSuggestions(false), 200)}
             placeholder="J. K. Rowling"
             required
-            className="w-full rounded-md border border-slate-300 dark:border-neutral-600 halloween:border-orange-700 bg-white dark:bg-neutral-700 halloween:bg-purple-900/80 text-slate-900 dark:text-neutral-100 halloween:text-orange-200 px-3 py-2 text-sm focus:border-blue-500 dark:focus:border-blue-400 halloween:focus:border-orange-400 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400 halloween:focus:ring-orange-500"
+            className="w-full rounded-md border border-slate-300 dark:border-neutral-600 christmas:border-orange-700 bg-white dark:bg-neutral-700 christmas:bg-purple-900/80 text-slate-900 dark:text-neutral-100 christmas:text-orange-200 px-3 py-2 text-sm focus:border-blue-500 dark:focus:border-blue-400 christmas:focus:border-orange-400 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400 christmas:focus:ring-orange-500"
           />
           {showAuthorSuggestions && authorSuggestions.length > 0 && (
             <div className="absolute z-[9999] mt-1 w-full max-h-60 overflow-auto rounded-md border border-slate-200 dark:border-neutral-600 bg-white dark:bg-neutral-700 shadow-lg">
@@ -293,7 +295,7 @@ export function ReadingLogForm() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full rounded-md bg-blue-600 dark:bg-blue-700 halloween:bg-orange-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 dark:hover:bg-blue-600 halloween:hover:bg-orange-500 disabled:cursor-not-allowed disabled:opacity-60"
+          className="w-full rounded-md bg-blue-600 dark:bg-blue-700 christmas:bg-orange-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 dark:hover:bg-blue-600 christmas:hover:bg-orange-500 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isSubmitting ? "Saving..." : "Save Reading Log"}
         </button>
