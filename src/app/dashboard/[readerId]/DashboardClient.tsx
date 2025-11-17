@@ -153,11 +153,12 @@ export default function DashboardClient({readerId}: DashboardClientProps) {
       </div>
 
       <header className="relative mx-auto flex max-w-7xl flex-col gap-4 px-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-          <div>
-            <p className="text-sm text-amber-700/70 dark:text-amber-400/70 christmas:text-orange-400/70">Signed in as</p>
-            <p className="text-base font-semibold text-amber-900 dark:text-amber-300 christmas:text-orange-500">{user?.email}</p>
-          </div>
+        <div className="flex flex-col gap-3 sm:flex-1">
+          <div className="flex flex-wrap items-center justify-between gap-3 sm:justify-start">
+            <div>
+              <p className="text-sm text-amber-700/70 dark:text-amber-400/70 christmas:text-orange-400/70">Signed in as</p>
+              <p className="text-base font-semibold text-amber-900 dark:text-amber-300 christmas:text-orange-500">{user?.email}</p>
+            </div>
 
           {/* Reader selector for parents */}
           {profile?.role === 'parent' && availableReaders.length > 0 && (
@@ -181,40 +182,65 @@ export default function DashboardClient({readerId}: DashboardClientProps) {
           )}
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <button
-            onClick={() => {
-              const themes: Array<"light" | "dark" | "system" | "christmas"> = ["light", "dark", "system", "christmas"];
-              const currentIndex = themes.indexOf(theme);
-              const nextTheme = themes[(currentIndex + 1) % themes.length];
-              setTheme(nextTheme);
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => {
+                  const themes: Array<"light" | "dark" | "system" | "christmas"> = ["light", "dark", "system", "christmas"];
+                  const currentIndex = themes.indexOf(theme);
+                  const nextTheme = themes[(currentIndex + 1) % themes.length];
+                  setTheme(nextTheme);
 
-              // Easter egg counter - 12 clicks for Christmas
-              const newCount = clickCount + 1;
-              setClickCount(newCount);
-              if (newCount === 12) {
-                setShowEasterEgg(true);
-                setClickCount(0);
-              }
-            }}
-            className="rounded-xl border-2 border-amber-200 dark:border-amber-700 christmas:border-orange-500 bg-white/80 dark:bg-neutral-800/80 christmas:bg-purple-950/80 p-2 text-amber-900 dark:text-amber-300 christmas:text-orange-500 transition hover:bg-white dark:hover:bg-neutral-800 christmas:hover:bg-purple-900 hover:border-amber-300 dark:hover:border-amber-600 christmas:hover:border-orange-400 hover:shadow-md"
-            title={`Theme: ${theme}`}
-            type="button"
-          >
-            {theme === "light" && <span className="text-xl">☀️</span>}
-            {theme === "dark" && <span className="text-xl">🌙</span>}
-            {theme === "system" && <span className="text-xl">💻</span>}
-            {theme === "christmas" && <span className="text-xl">🎄</span>}
-          </button>
-          <button
-            className="rounded-xl border-2 border-amber-200 dark:border-amber-700 christmas:border-orange-500 bg-white/80 dark:bg-neutral-800/80 christmas:bg-purple-950/80 px-4 py-2 text-sm font-semibold text-amber-900 dark:text-amber-300 christmas:text-orange-500 transition hover:bg-white dark:hover:bg-neutral-800 christmas:hover:bg-purple-900 hover:border-amber-300 dark:hover:border-amber-600 christmas:hover:border-orange-400 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
-            disabled={isSigningOut}
-            onClick={handleSignOut}
-            type="button"
-          >
-            {isSigningOut ? "Signing out..." : "Sign out"}
-          </button>
+                  // Easter egg counter - 12 clicks for Christmas
+                  const newCount = clickCount + 1;
+                  setClickCount(newCount);
+                  if (newCount === 12) {
+                    setShowEasterEgg(true);
+                    setClickCount(0);
+                  }
+                }}
+                className="rounded-xl border-2 border-amber-200 dark:border-amber-700 christmas:border-orange-500 bg-white/80 dark:bg-neutral-800/80 christmas:bg-purple-950/80 p-2 text-amber-900 dark:text-amber-300 christmas:text-orange-500 transition hover:bg-white dark:hover:bg-neutral-800 christmas:hover:bg-purple-900 hover:border-amber-300 dark:hover:border-amber-600 christmas:hover:border-orange-400 hover:shadow-md"
+                title={`Theme: ${theme}`}
+                type="button"
+              >
+                {theme === "light" && <span className="text-xl">☀️</span>}
+                {theme === "dark" && <span className="text-xl">🌙</span>}
+                {theme === "system" && <span className="text-xl">💻</span>}
+                {theme === "christmas" && <span className="text-xl">🎄</span>}
+              </button>
+              <button
+                className="rounded-xl border-2 border-amber-200 dark:border-amber-700 christmas:border-orange-500 bg-white/80 dark:bg-neutral-800/80 christmas:bg-purple-950/80 px-4 py-2 text-sm font-semibold text-amber-900 dark:text-amber-300 christmas:text-orange-500 transition hover:bg-white dark:hover:bg-neutral-800 christmas:hover:bg-purple-900 hover:border-amber-300 dark:hover:border-amber-600 christmas:hover:border-orange-400 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
+                disabled={isSigningOut}
+                onClick={handleSignOut}
+                type="button"
+              >
+                {isSigningOut ? "Signing out..." : "Sign out"}
+              </button>
+            </div>
+          </div>
+
+          {/* Reader selector for parents */}
+          {profile?.role === 'parent' && availableReaders.length > 0 && (
+            <div className="flex flex-col max-w-xs">
+              <label htmlFor="reader-select" className="block text-xs text-amber-700/70 dark:text-amber-400/70 christmas:text-orange-400/70 mb-1">
+                Viewing:
+              </label>
+              <select
+                id="reader-select"
+                value={readerId}
+                onChange={(e) => router.push(`/dashboard/${e.target.value}`)}
+                className="rounded-lg border-2 border-amber-200 dark:border-amber-700 christmas:border-orange-500 bg-white dark:bg-neutral-800 christmas:bg-purple-950/80 text-amber-900 dark:text-amber-300 christmas:text-orange-500 px-3 py-1.5 text-sm font-semibold transition hover:border-amber-300 dark:hover:border-amber-600 christmas:hover:border-orange-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                {availableReaders.map(reader => (
+                  <option key={reader.id} value={reader.id}>
+                    {reader.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
+
+        <div className="hidden" />
       </header>
 
       <main className="relative mx-auto mt-8 max-w-7xl px-4 sm:px-6 pb-12">
