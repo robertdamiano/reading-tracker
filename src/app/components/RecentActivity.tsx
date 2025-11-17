@@ -122,7 +122,7 @@ export function RecentActivity({readerId}: RecentActivityProps) {
   }
 
   return (
-    <div className="rounded-2xl border-2 border-amber-200/50 dark:border-amber-800/50 christmas:border-orange-500/50 bg-gradient-to-br from-white to-amber-50/30 dark:from-neutral-800 dark:to-stone-800/30 christmas:from-purple-950 christmas:to-orange-950/30 p-4 sm:p-6 shadow-xl backdrop-blur-sm flex flex-col">
+    <div className="rounded-2xl border-2 border-amber-200/50 dark:border-amber-800/50 christmas:border-orange-500/50 bg-gradient-to-br from-white to-amber-50/30 dark:from-neutral-800 dark:to-stone-800/30 christmas:from-purple-950 christmas:to-orange-950/30 p-4 sm:p-6 shadow-xl backdrop-blur-sm flex flex-col min-w-0">
       <h2 className="text-xl font-bold text-amber-900 dark:text-amber-400 christmas:text-orange-500 mb-4">Recent Activity</h2>
 
       {logs.length === 0 ? (

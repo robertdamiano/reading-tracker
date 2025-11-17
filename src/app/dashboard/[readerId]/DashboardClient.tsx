@@ -236,7 +236,7 @@ export default function DashboardClient({readerId}: DashboardClientProps) {
         </div>
 
         {/* Achievements and Recent Activity Row */}
-        <div className="mt-4 sm:mt-6 grid gap-4 sm:gap-6 md:grid-cols-2 auto-rows-auto">
+        <div className="mt-4 sm:mt-6 grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 auto-rows-auto">
           <Achievements readerId={readerId} />
           <RecentActivity readerId={readerId} />
         </div>

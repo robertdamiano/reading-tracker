@@ -172,7 +172,7 @@ export function Achievements({readerId}: AchievementsProps) {
   const inProgressAchievements = achievements.filter(a => !a.isCompleted);
 
   return (
-    <div className="rounded-2xl border-2 border-amber-200/50 dark:border-amber-800/50 christmas:border-orange-500/50 bg-gradient-to-br from-white to-amber-50/30 dark:from-neutral-800 dark:to-stone-800/30 christmas:from-purple-950 christmas:to-orange-950/30 p-4 sm:p-6 shadow-xl backdrop-blur-sm flex flex-col">
+    <div className="rounded-2xl border-2 border-amber-200/50 dark:border-amber-800/50 christmas:border-orange-500/50 bg-gradient-to-br from-white to-amber-50/30 dark:from-neutral-800 dark:to-stone-800/30 christmas:from-purple-950 christmas:to-orange-950/30 p-4 sm:p-6 shadow-xl backdrop-blur-sm flex flex-col min-w-0">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-bold text-amber-900 dark:text-amber-400 christmas:text-orange-500">Achievements</h2>
         <span className="text-sm font-semibold text-amber-700 dark:text-amber-400 christmas:text-orange-400 bg-amber-100 dark:bg-amber-900/30 christmas:bg-orange-900/50 px-3 py-1 rounded-full">

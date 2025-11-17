@@ -31,5 +31,7 @@ module.exports = {
     "indent": ["error", 2],
     "linebreak-style": 0,
     "max-len": ["error", {code: 100, ignoreUrls: true}],
+    "require-jsdoc": "off",
+    "valid-jsdoc": "off",
   },
 };
