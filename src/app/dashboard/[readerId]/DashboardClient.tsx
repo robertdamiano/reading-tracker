@@ -160,28 +160,6 @@ export default function DashboardClient({readerId}: DashboardClientProps) {
               <p className="text-base font-semibold text-amber-900 dark:text-amber-300 christmas:text-orange-500">{user?.email}</p>
             </div>
 
-          {/* Reader selector for parents */}
-          {profile?.role === 'parent' && availableReaders.length > 0 && (
-            <div>
-              <label htmlFor="reader-select" className="block text-xs text-amber-700/70 dark:text-amber-400/70 christmas:text-orange-400/70 mb-1">
-                Viewing:
-              </label>
-              <select
-                id="reader-select"
-                value={readerId}
-                onChange={(e) => router.push(`/dashboard/${e.target.value}`)}
-                className="rounded-lg border-2 border-amber-200 dark:border-amber-700 christmas:border-orange-500 bg-white dark:bg-neutral-800 christmas:bg-purple-950/80 text-amber-900 dark:text-amber-300 christmas:text-orange-500 px-3 py-1.5 text-sm font-semibold transition hover:border-amber-300 dark:hover:border-amber-600 christmas:hover:border-orange-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                {availableReaders.map(reader => (
-                  <option key={reader.id} value={reader.id}>
-                    {reader.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-        </div>
-
             <div className="flex items-center gap-3">
               <button
                 onClick={() => {
@@ -190,7 +168,6 @@ export default function DashboardClient({readerId}: DashboardClientProps) {
                   const nextTheme = themes[(currentIndex + 1) % themes.length];
                   setTheme(nextTheme);
 
-                  // Easter egg counter - 12 clicks for Christmas
                   const newCount = clickCount + 1;
                   setClickCount(newCount);
                   if (newCount === 12) {
@@ -218,7 +195,6 @@ export default function DashboardClient({readerId}: DashboardClientProps) {
             </div>
           </div>
 
-          {/* Reader selector for parents */}
           {profile?.role === 'parent' && availableReaders.length > 0 && (
             <div className="flex flex-col max-w-xs">
               <label htmlFor="reader-select" className="block text-xs text-amber-700/70 dark:text-amber-400/70 christmas:text-orange-400/70 mb-1">
@@ -240,7 +216,7 @@ export default function DashboardClient({readerId}: DashboardClientProps) {
           )}
         </div>
 
-        <div className="hidden" />
+        <div className="hidden sm:block" />
       </header>
 
       <main className="relative mx-auto mt-8 max-w-7xl px-4 sm:px-6 pb-12">
