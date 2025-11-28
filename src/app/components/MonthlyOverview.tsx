@@ -1,8 +1,14 @@
 "use client";
 
-import {useState, useEffect} from "react";
-import {collection, getDocs} from "firebase/firestore";
+import {useState, useEffect, useMemo} from "react";
+import {collection, onSnapshot} from "firebase/firestore";
 import {db} from "@/lib/firebase/client";
+
+interface LogData {
+  logDateString: string;
+  logType: "minutes" | "pages" | "books";
+  value: number;
+}
 
 interface MonthlyData {
   year: number;
@@ -30,7 +36,7 @@ interface MonthlyOverviewProps {
 
 export function MonthlyOverview({readerId}: MonthlyOverviewProps) {
   const [displayMonth, setDisplayMonth] = useState(() => getCurrentMonth());
-  const [monthlyData, setMonthlyData] = useState<MonthlyData | null>(null);
+  const [allLogs, setAllLogs] = useState<LogData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -57,66 +63,84 @@ export function MonthlyOverview({readerId}: MonthlyOverviewProps) {
     });
   };
 
+  // Fetch all logs once - only re-fetch when readerId changes
   useEffect(() => {
-    async function fetchMonthlyData() {
-      try {
-        setLoading(true);
-        setError(null);
+    setLoading(true);
+    setError(null);
 
-        const {year, month} = displayMonth;
-        const daysInMonth = getDaysInMonth(year, month);
-
-        const logsRef = collection(db, `readers/${readerId}/logs`);
-        const snapshot = await getDocs(logsRef);
-
-        const monthPrefix = `${year}-${String(month).padStart(2, '0')}`;
-
-        const totals = {
-          minutes: 0,
-          pages: 0,
-          books: 0
-        };
-
-        const loggedDates = new Set<string>();
-
-        snapshot.forEach(doc => {
-          const data = doc.data();
-
-          // Only include logs from current month
-          if (data.logDateString && data.logDateString.startsWith(monthPrefix)) {
-            if (data.logType === "minutes") {
-              totals.minutes += data.value;
-            } else if (data.logType === "pages") {
-              totals.pages += data.value;
-            } else if (data.logType === "books") {
-              totals.books += data.value;
-            }
-
-            loggedDates.add(data.logDateString);
-          }
-        });
-
-        setMonthlyData({
-          year,
-          month,
-          totalMinutes: totals.minutes,
-          totalPages: totals.pages,
-          totalBooks: totals.books,
-          daysLogged: loggedDates.size,
-          daysInMonth,
-          loggedDates
-        });
-
-      } catch (err) {
-        console.error("Failed to fetch monthly data:", err);
+    const logsRef = collection(db, `readers/${readerId}/logs`);
+    const unsubscribe = onSnapshot(
+      logsRef,
+      (snapshot) => {
+        try {
+          const logs: LogData[] = [];
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            logs.push({
+              logDateString: data.logDateString,
+              logType: data.logType,
+              value: data.value
+            });
+          });
+          setAllLogs(logs);
+          setLoading(false);
+        } catch (err) {
+          console.error("Failed to process logs:", err);
+          setError("Failed to load monthly overview");
+          setLoading(false);
+        }
+      },
+      (err) => {
+        console.error("Failed to fetch logs:", err);
         setError("Failed to load monthly overview");
-      } finally {
         setLoading(false);
       }
-    }
+    );
 
-    void fetchMonthlyData();
-  }, [displayMonth, readerId]);
+    // Cleanup: unsubscribe from listener on unmount
+    return () => unsubscribe();
+  }, [readerId]);
+
+  // Calculate monthly data from all logs - instant when month changes
+  const monthlyData = useMemo((): MonthlyData => {
+    const {year, month} = displayMonth;
+    const monthPrefix = `${year}-${String(month).padStart(2, '0')}`;
+    const daysInMonth = getDaysInMonth(year, month);
+
+    const totals = {
+      minutes: 0,
+      pages: 0,
+      books: 0
+    };
+
+    const loggedDates = new Set<string>();
+
+    allLogs.forEach(log => {
+      // Only include logs from current month
+      if (log.logDateString && log.logDateString.startsWith(monthPrefix)) {
+        if (log.logType === "minutes") {
+          totals.minutes += log.value;
+        } else if (log.logType === "pages") {
+          totals.pages += log.value;
+        } else if (log.logType === "books") {
+          totals.books += log.value;
+        }
+
+        loggedDates.add(log.logDateString);
+      }
+    });
+
+    return {
+      year,
+      month,
+      totalMinutes: totals.minutes,
+      totalPages: totals.pages,
+      totalBooks: totals.books,
+      daysLogged: loggedDates.size,
+      daysInMonth,
+      loggedDates
+    };
+  }, [allLogs, displayMonth]);
 
   if (loading) {
     return (
@@ -127,11 +151,11 @@ export function MonthlyOverview({readerId}: MonthlyOverviewProps) {
     );
   }
 
-  if (error || !monthlyData) {
+  if (error) {
     return (
       <div className="rounded-2xl border-2 border-amber-200/50 dark:border-amber-800/50 bg-gradient-to-br from-white to-amber-50/30 dark:from-neutral-800 dark:to-stone-800/30 p-4 sm:p-6 shadow-xl backdrop-blur-sm">
         <h2 className="text-xl font-bold text-amber-900 dark:text-amber-400 mb-4">Monthly Overview</h2>
-        <p className="text-sm text-red-600 dark:text-red-400">{error || "Failed to load monthly overview"}</p>
+        <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
       </div>
     );
   }

@@ -1,7 +1,7 @@
 "use client";
 
 import {useState, useEffect} from "react";
-import {collection, getDocs} from "firebase/firestore";
+import {collection, onSnapshot} from "firebase/firestore";
 import {db} from "@/lib/firebase/client";
 
 interface LogEntry {
@@ -62,45 +62,50 @@ export function RecentActivity({readerId}: RecentActivityProps) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchRecentLogs() {
-      try {
-        setLoading(true);
-        setError(null);
+    setLoading(true);
+    setError(null);
 
-        const logsRef = collection(db, `readers/${readerId}/logs`);
-
-        // Fetch all logs and sort client-side (Firestore needs index for orderBy)
-        const snapshot = await getDocs(logsRef);
-
-        const allLogs: LogEntry[] = [];
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          allLogs.push({
-            id: doc.id,
-            logDateString: data.logDateString,
-            logType: data.logType,
-            value: data.value,
-            bookTitle: data.bookTitle,
-            bookAuthor: data.bookAuthor,
+    // Set up real-time listener for logs
+    const logsRef = collection(db, `readers/${readerId}/logs`);
+    const unsubscribe = onSnapshot(
+      logsRef,
+      (snapshot) => {
+        try {
+          const allLogs: LogEntry[] = [];
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            allLogs.push({
+              id: doc.id,
+              logDateString: data.logDateString,
+              logType: data.logType,
+              value: data.value,
+              bookTitle: data.bookTitle,
+              bookAuthor: data.bookAuthor,
+            });
           });
-        });
 
-        // Sort by date descending and take top 10
-        const sortedLogs = allLogs
-          .sort((a, b) => b.logDateString.localeCompare(a.logDateString))
-          .slice(0, 10);
+          // Sort by date descending and take top 10
+          const sortedLogs = allLogs
+            .sort((a, b) => b.logDateString.localeCompare(a.logDateString))
+            .slice(0, 10);
 
-        setLogs(sortedLogs);
-
-      } catch (err) {
+          setLogs(sortedLogs);
+          setLoading(false);
+        } catch (err) {
+          console.error("Failed to process recent logs:", err);
+          setError("Failed to load recent activity");
+          setLoading(false);
+        }
+      },
+      (err) => {
         console.error("Failed to fetch recent logs:", err);
         setError("Failed to load recent activity");
-      } finally {
         setLoading(false);
       }
-    }
+    );
 
-    void fetchRecentLogs();
+    // Cleanup: unsubscribe from listener on unmount
+    return () => unsubscribe();
   }, [readerId]);
 
   if (loading) {

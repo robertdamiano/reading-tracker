@@ -1,7 +1,7 @@
 "use client";
 
 import {useState, useEffect} from "react";
-import {collection, getDocs} from "firebase/firestore";
+import {collection, onSnapshot} from "firebase/firestore";
 import {db} from "@/lib/firebase/client";
 
 interface Achievement {
@@ -95,59 +95,66 @@ export function Achievements({readerId}: AchievementsProps) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchAchievements() {
-      try {
-        setLoading(true);
-        setError(null);
+    setLoading(true);
+    setError(null);
 
-        const logsRef = collection(db, `readers/${readerId}/logs`);
-        const snapshot = await getDocs(logsRef);
+    // Set up real-time listener for logs
+    const logsRef = collection(db, `readers/${readerId}/logs`);
+    const unsubscribe = onSnapshot(
+      logsRef,
+      (snapshot) => {
+        try {
+          const totals = {
+            minutes: 0,
+            pages: 0,
+            books: 0
+          };
 
-        const totals = {
-          minutes: 0,
-          pages: 0,
-          books: 0
-        };
+          const uniqueDates = new Set<string>();
 
-        const uniqueDates = new Set<string>();
+          snapshot.forEach(doc => {
+            const data = doc.data();
 
-        snapshot.forEach(doc => {
-          const data = doc.data();
+            if (data.logType === "minutes") {
+              totals.minutes += data.value;
+            } else if (data.logType === "pages") {
+              totals.pages += data.value;
+            } else if (data.logType === "books") {
+              totals.books += data.value;
+            }
 
-          if (data.logType === "minutes") {
-            totals.minutes += data.value;
-          } else if (data.logType === "pages") {
-            totals.pages += data.value;
-          } else if (data.logType === "books") {
-            totals.books += data.value;
-          }
+            if (data.logDateString) {
+              uniqueDates.add(data.logDateString);
+            }
+          });
 
-          if (data.logDateString) {
-            uniqueDates.add(data.logDateString);
-          }
-        });
+          const sortedDates = Array.from(uniqueDates).sort();
+          const currentStreak = calculateStreak(sortedDates);
 
-        const sortedDates = Array.from(uniqueDates).sort();
-        const currentStreak = calculateStreak(sortedDates);
+          const stats: Stats = {
+            currentStreak,
+            totalMinutes: totals.minutes,
+            totalPages: totals.pages,
+            totalBooks: totals.books
+          };
 
-        const stats: Stats = {
-          currentStreak,
-          totalMinutes: totals.minutes,
-          totalPages: totals.pages,
-          totalBooks: totals.books
-        };
-
-        setAchievements(generateAchievements(stats));
-
-      } catch (err) {
+          setAchievements(generateAchievements(stats));
+          setLoading(false);
+        } catch (err) {
+          console.error("Failed to process achievements:", err);
+          setError("Failed to load achievements");
+          setLoading(false);
+        }
+      },
+      (err) => {
         console.error("Failed to fetch achievements:", err);
         setError("Failed to load achievements");
-      } finally {
         setLoading(false);
       }
-    }
+    );
 
-    void fetchAchievements();
+    // Cleanup: unsubscribe from listener on unmount
+    return () => unsubscribe();
   }, [readerId]);
 
   if (loading) {

@@ -33,7 +33,7 @@ service cloud.firestore {
     // appUsers collection - user profiles and roles
     match /appUsers/{uid} {
       allow read: if isFamilyMember();
-      allow write: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
     }
 
     // readers collection - reader profiles

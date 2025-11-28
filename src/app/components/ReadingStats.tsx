@@ -1,7 +1,7 @@
 "use client";
 
 import {useState, useEffect} from "react";
-import {collection, getDocs} from "firebase/firestore";
+import {collection, onSnapshot} from "firebase/firestore";
 import {db} from "@/lib/firebase/client";
 
 interface Stats {
@@ -49,69 +49,75 @@ export function ReadingStats({readerId}: ReadingStatsProps) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchStats() {
-      try {
-        setLoading(true);
-        setError(null);
+    setLoading(true);
+    setError(null);
 
-        // Fetch all logs for the reader
-        const logsRef = collection(db, `readers/${readerId}/logs`);
-        const snapshot = await getDocs(logsRef);
+    // Set up real-time listener for logs
+    const logsRef = collection(db, `readers/${readerId}/logs`);
+    const unsubscribe = onSnapshot(
+      logsRef,
+      (snapshot) => {
+        try {
+          // Calculate stats
+          const totals = {
+            minutes: 0,
+            pages: 0,
+            books: 0
+          };
 
-        // Calculate stats
-        const totals = {
-          minutes: 0,
-          pages: 0,
-          books: 0
-        };
+          const uniqueDates = new Set<string>();
+          let lastLogDate = "";
 
-        const uniqueDates = new Set<string>();
-        let lastLogDate = "";
+          snapshot.forEach(doc => {
+            const data = doc.data();
 
-        snapshot.forEach(doc => {
-          const data = doc.data();
-
-          // Aggregate by type
-          if (data.logType === "minutes") {
-            totals.minutes += data.value;
-          } else if (data.logType === "pages") {
-            totals.pages += data.value;
-          } else if (data.logType === "books") {
-            totals.books += data.value;
-          }
-
-          // Track unique dates
-          if (data.logDateString) {
-            uniqueDates.add(data.logDateString);
-
-            // Track latest log date
-            if (!lastLogDate || data.logDateString > lastLogDate) {
-              lastLogDate = data.logDateString;
+            // Aggregate by type
+            if (data.logType === "minutes") {
+              totals.minutes += data.value;
+            } else if (data.logType === "pages") {
+              totals.pages += data.value;
+            } else if (data.logType === "books") {
+              totals.books += data.value;
             }
-          }
-        });
 
-        // Calculate streak
-        const sortedDates = Array.from(uniqueDates).sort();
-        const currentStreak = calculateStreak(sortedDates);
+            // Track unique dates
+            if (data.logDateString) {
+              uniqueDates.add(data.logDateString);
 
-        setStats({
-          currentStreak,
-          lastLogDate,
-          totalMinutes: totals.minutes,
-          totalPages: totals.pages,
-          totalBooks: totals.books
-        });
+              // Track latest log date
+              if (!lastLogDate || data.logDateString > lastLogDate) {
+                lastLogDate = data.logDateString;
+              }
+            }
+          });
 
-      } catch (err) {
+          // Calculate streak
+          const sortedDates = Array.from(uniqueDates).sort();
+          const currentStreak = calculateStreak(sortedDates);
+
+          setStats({
+            currentStreak,
+            lastLogDate,
+            totalMinutes: totals.minutes,
+            totalPages: totals.pages,
+            totalBooks: totals.books
+          });
+          setLoading(false);
+        } catch (err) {
+          console.error("Failed to process stats:", err);
+          setError("Failed to load statistics");
+          setLoading(false);
+        }
+      },
+      (err) => {
         console.error("Failed to fetch stats:", err);
         setError("Failed to load statistics");
-      } finally {
         setLoading(false);
       }
-    }
+    );
 
-    void fetchStats();
+    // Cleanup: unsubscribe from listener on unmount
+    return () => unsubscribe();
   }, [readerId]);
 
   if (loading) {
