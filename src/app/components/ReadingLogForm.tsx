@@ -7,6 +7,8 @@ import {useAuth} from "../providers/AuthProvider";
 
 type LogType = "minutes" | "pages" | "books";
 
+const SUCCESS_MESSAGE_TIMEOUT_MS = 3000;
+
 interface Book {
   title: string;
   author: string;
@@ -97,6 +99,17 @@ export function ReadingLogForm({readerId}: ReadingLogFormProps) {
       setAuthorSuggestions([]);
     }
   }, [bookAuthor, books]);
+
+  // Auto-dismiss success messages after timeout
+  useEffect(() => {
+    if (message?.type === "success") {
+      const timer = setTimeout(() => {
+        setMessage(null);
+      }, SUCCESS_MESSAGE_TIMEOUT_MS);
+
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
